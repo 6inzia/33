@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Page privée : ne pas apparaître dans Google -->
+<meta name="robots" content="noindex, nofollow">
+<title>Pour Deniz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Dancing+Script:wght@500;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* Mêmes couleurs que le site (style Final Fantasy X) */
+  :root {
+    --deep: #040b1c;
+    --ink: #f4f0e6;
+    --muted: #a9c3e0;
+    --cyan: #8fdcff;
+    --gold: #ffd76a;
+    --glass-top: rgba(40, 70, 140, .62);
+    --glass-bot: rgba(8, 16, 48, .82);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--deep);
+    background-image:
+      radial-gradient(ellipse 120% 60% at 50% -10%, rgba(120, 200, 255, .45), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 100% 60%, rgba(150, 90, 220, .22), transparent 60%),
+      linear-gradient(180deg, #1d5f96 0%, #0b2a52 30%, var(--deep) 100%);
+    background-attachment: fixed;
+    color: var(--ink); font-family: Inter, system-ui, sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 28px 16px; overflow-x: hidden;
+  }
+  body::before { content: ""; position: fixed; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(100deg, transparent 0 60px, rgba(180, 230, 255, .05) 60px 90px, transparent 90px 170px);
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 70%); mask-image: linear-gradient(180deg, #000, transparent 70%); }
+  /* Lumières flottantes (« pyreflies ») */
+  .pyre { position: fixed; width: 6px; height: 6px; border-radius: 50%; background: #d8f4ff; pointer-events: none; z-index: 5;
+    box-shadow: 0 0 10px 4px rgba(140, 215, 255, .7); animation: rise linear infinite; opacity: 0; }
+  .pyre.warm { background: #fff4cf; box-shadow: 0 0 12px 5px rgba(255, 215, 106, .75); }
+  @keyframes rise { 10% { opacity: .9; } 85% { opacity: .5; } to { transform: translate(var(--dx), -105vh); opacity: 0; } }
+
+  /* Enveloppe */
+  #envScreen { text-align: center; transition: opacity .5s; position: relative; z-index: 2; }
+  #envScreen.hide { opacity: 0; }
+  #envelope { width: min(280px, 78vw); aspect-ratio: 3 / 2; position: relative; cursor: pointer; margin: 0 auto; animation: bob 2.4s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+  #envelope .back { position: absolute; inset: 0; border-radius: 8px; background: linear-gradient(180deg, #eaf4ff, #bcd6f2);
+    box-shadow: 0 0 40px rgba(140, 210, 255, .55), 0 20px 50px rgba(0, 0, 0, .5); }
+  #envelope .flap { position: absolute; left: 0; right: 0; top: 0; height: 60%; background: #a9c6e8;
+    clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top; transition: transform .6s; border-radius: 8px 8px 0 0; }
+  #envelope .seal { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); width: 54px; height: 54px; border-radius: 50%;
+    display: grid; place-items: center; font-family: Cinzel, serif; font-weight: 700; color: #6b4a00; font-size: 17px;
+    background: radial-gradient(circle at 35% 30%, #fff3c4, var(--gold) 55%, #b58516); box-shadow: 0 0 18px rgba(255, 215, 106, .8); transition: opacity .3s; }
+  #envelope.open .flap { transform: rotateX(180deg); }
+  #envelope.open .seal { opacity: 0; }
+  .tap { font-family: Cinzel, serif; letter-spacing: 3px; font-size: 13px; color: var(--muted); margin-top: 24px; }
+
+  /* L'affiche */
+  #letter { display: none; width: 100%; max-width: 460px; position: relative; z-index: 2; padding: 44px 28px 36px;
+    background: linear-gradient(180deg, var(--glass-top), var(--glass-bot));
+    border: 1px solid rgba(255, 215, 106, .75); border-radius: 4px;
+    box-shadow: inset 0 0 0 5px rgba(4, 11, 28, .55), inset 0 0 0 6px rgba(255, 215, 106, .35), 0 0 40px rgba(110, 175, 255, .3), 0 24px 60px rgba(0, 0, 0, .55);
+    animation: up 1s ease-out; }
+  #letter.show { display: block; }
+  @keyframes up { from { opacity: 0; transform: translateY(30px); } }
+  /* Coins dorés */
+  .corner { position: absolute; width: 22px; height: 22px; border: 2px solid var(--gold); }
+  .corner.tl { top: 12px; left: 12px; border-right: 0; border-bottom: 0; }
+  .corner.tr { top: 12px; right: 12px; border-left: 0; border-bottom: 0; }
+  .corner.bl { bottom: 12px; left: 12px; border-right: 0; border-top: 0; }
+  .corner.br { bottom: 12px; right: 12px; border-left: 0; border-top: 0; }
+  .head { text-align: center; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 4px; font-size: 13px; color: var(--cyan); margin: 0 0 6px; }
+  .divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 0 24px; }
+  .divider::before, .divider::after { content: ""; width: 70px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+  .divider::after { transform: scaleX(-1); }
+  .divider i { width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 8px rgba(255, 215, 106, .9); }
+  /* Écriture manuscrite, attachée */
+  #letter p { margin: 0 0 20px; font-family: "Dancing Script", cursive; font-weight: 500; font-size: 23px; line-height: 1.45; }
+  #letter .hello { font-family: "Dancing Script", cursive; font-weight: 600; font-size: 34px; color: #fff; }
+  #letter .end { font-family: Cinzel, serif; font-style: normal; font-weight: 700; font-size: 26px; letter-spacing: 3px; text-align: center; color: var(--gold);
+    text-shadow: 0 0 16px rgba(255, 215, 106, .8); margin: 30px 0 0; }
+  /* La lettre s'écrit toute seule : chaque lettre naît dans un petit éclat bleu, puis se pose */
+  #letter .c { opacity: 0; display: inline-block; white-space: pre; }
+  #letter .c.in { animation: spark 1.2s ease-out forwards; }
+  @keyframes spark { 0% { opacity: 0; transform: scale(1.6); filter: blur(3px); color: #dff6ff; text-shadow: 0 0 14px #8fdcff; }
+    40% { opacity: 1; transform: scale(1); filter: none; text-shadow: 0 0 8px rgba(140, 220, 255, .8); }
+    100% { opacity: 1; text-shadow: 0 1px 2px rgba(0, 0, 0, .6); } }
+  #letter .end .c.in { animation-name: sparkGold; }
+  @keyframes sparkGold { 0% { opacity: 0; transform: scale(1.6); filter: blur(3px); } 40% { opacity: 1; transform: scale(1); filter: none; }
+    100% { opacity: 1; text-shadow: 0 0 16px rgba(255, 215, 106, .8); } }
+  /* Lucioles qui s'envolent du texte en train de s'écrire */
+  .fly { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #d8f4ff; box-shadow: 0 0 8px 3px rgba(140, 215, 255, .7); pointer-events: none; animation: flyUp 2.6s ease-out forwards; }
+  @keyframes flyUp { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), -90px); } }
+
+  /* Lien discret : petites lettres FFX entre deux fins traits dorés */
+  .back-link { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 30px auto 0; padding: 8px 4px; text-decoration: none;
+    font-family: Cinzel, serif; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
+    opacity: 0; transition: opacity 1s, color .3s, text-shadow .3s; }
+  .back-link::before, .back-link::after { content: ""; width: 34px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 215, 106, .7)); }
+  .back-link::after { transform: scaleX(-1); }
+  .back-link.in { opacity: 1; }
+  .back-link:hover, .back-link:focus { color: #fff; text-shadow: 0 0 10px rgba(140, 210, 255, .9); }
+</style>
+</head>
+<body>
+
+<div id="envScreen">
+  <div id="envelope" role="button" aria-label="Ouvrir la lettre">
+    <div class="back"></div>
+    <div class="flap"></div>
+    <div class="seal">33</div>
+  </div>
+</div>
+
+<article id="letter">
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+  <p class="head" style="font-family:Cinzel,serif;font-style:normal;font-size:13px;margin:0 0 6px">AMSTERDAM · 19 DÉCEMBRE 2026</p>
+  <div class="divider"><i></i></div>
+  <p class="hello">Deniz,</p>
+  <p>Il m'arrive de me demander si je suis assez bien, assez belle, assez séduisante… assez tout. Même si je sais que tu m'aimes, j'ai besoin que tu me le prouves tous les jours pour y croire encore et encore.</p>
+  <p>Tu n'es pas seulement mon amoureux. Tu es celui à qui j'ai envie de raconter les choses les plus insignifiantes de ma journée, celui qui connaît mes défauts, mes hésitations sans fin, qui me connaît tout court, et qui continue de m'aimer.</p>
+  <p>Tu es mon meilleur ami, mon partner, mon futur fiancé. Celui avec qui je veux tout vivre, être toujours à tes côtés et me dire que je n'aurais envie d'être nulle part ailleurs.</p>
+  <p class="end">Joyeux 33 ans</p>
+  <a class="back-link" href="index.html?skip">revoir le week-end</a>
+</article>
+
+<script>
+  // Lumières flottantes en fond
+  function pyre(opts = {}) {
+    const p = document.createElement('i');
+    p.className = 'pyre' + (opts.warm ? ' warm' : '');
+    p.style.left = (opts.x ?? Math.random() * 100) + 'vw';
+    p.style.bottom = (opts.y ?? -2) + 'vh';
+    p.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+    p.style.animationDuration = (opts.dur ?? 9 + Math.random() * 9) + 's';
+    p.style.animationDelay = (opts.delay ?? Math.random() * 12) + 's';
+    if (opts.once) { p.style.animationIterationCount = '1'; setTimeout(() => p.remove(), 9000); }
+    document.body.appendChild(p);
+  }
+  for (let i = 0; i < 20; i++) pyre();
+
+  // À la fin : une nuée de lucioles dorées qui monte
+  function finale() {
+    for (let i = 0; i < 30; i++) pyre({ warm: i % 2 === 0, x: Math.random() * 100, y: Math.random() * 30, dur: 4 + Math.random() * 4, delay: Math.random() * 2, once: true });
+  }
+
+  // Découpe la lettre en lettres (groupées par mots pour que les lignes ne coupent pas un mot),
+  // posées invisibles dès le départ : la mise en page ne bouge pas pendant l'écriture.
+  const letter = document.getElementById('letter');
+  const paras = [...document.querySelectorAll('#letter p:not(.head)')];
+  paras.forEach(p => {
+    p.innerHTML = p.textContent.trim().split(/\s+/)
+      .map(w => '<span style="white-space:nowrap">' + [...w].map(ch => `<span class="c">${ch}</span>`).join('') + '</span>').join(' ');
+  });
+  function flyFrom(c) {
+    const r = c.getBoundingClientRect(), b = letter.getBoundingClientRect(), f = document.createElement('i');
+    f.className = 'fly';
+    f.style.left = (r.left - b.left + r.width / 2) + 'px';
+    f.style.top = (r.top - b.top) + 'px';
+    f.style.setProperty('--dx', (Math.random() * 40 - 20) + 'px');
+    letter.appendChild(f);
+    setTimeout(() => f.remove(), 2700);
+  }
+  function writeLetter() {
+    const steps = [];
+    paras.forEach(p => {
+      p.querySelectorAll('.c').forEach(c => {
+        const ch = c.textContent;
+        // Rythme d'une main qui écrit : pause aux virgules, plus longue aux points
+        steps.push({ c, pause: /[.…!?]/.test(ch) ? 340 : ch === ',' ? 190 : 32 + Math.random() * 18 });
+      });
+      steps[steps.length - 1].pause = 900; // respiration entre deux paragraphes
+    });
+    let i = 0;
+    (function next() {
+      if (i >= steps.length) {
+        finale();
+        document.querySelector('.back-link').classList.add('in');
+        return;
+      }
+      const { c, pause } = steps[i++];
+      c.classList.add('in');
+      if (Math.random() < .12) flyFrom(c);
+      // Fait défiler la page pour suivre l'écriture
+      if (c.getBoundingClientRect().bottom > innerHeight - 60) scrollBy({ top: 120, behavior: 'smooth' });
+      setTimeout(next, pause);
+    })();
+  }
+
+  const env = document.getElementById('envelope');
+  env.addEventListener('click', () => {
+    env.classList.add('open');
+    setTimeout(() => document.getElementById('envScreen').classList.add('hide'), 700);
+    setTimeout(() => {
+      document.getElementById('envScreen').style.display = 'none';
+      document.body.style.alignItems = 'flex-start';
+      document.getElementById('letter').classList.add('show');
+      writeLetter();
+    }, 1200);
+  }, { once: true });
+
+  // Pour l'aperçu : ?ouverte affiche directement la lettre entière
+  if (location.search.includes('ouverte')) {
+    document.getElementById('envScreen').style.display = 'none';
+    document.body.style.alignItems = 'flex-start';
+    document.getElementById('letter').classList.add('show');
+    document.querySelectorAll('#letter .c').forEach(c => c.classList.add('in'));
+    document.querySelector('.back-link').classList.add('in');
+  }
+</script>
+</body>
+</html>

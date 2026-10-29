@@ -1,0 +1,1352 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Page privée : ne pas apparaître dans Google -->
+<meta name="robots" content="noindex, nofollow">
+<title>Niveau 33 · Deniz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@1,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Style inspiré de Final Fantasy X : l'eau, la lumière, les « pyreflies » */
+  :root {
+    --deep: #040b1c;
+    --ocean: #0b2a52;
+    --sea: #1d5f96;
+    --cyan: #8fdcff;
+    --ink: #eef6ff;
+    --muted: #a9c3e0;
+    --gold: #ffd76a;
+    --violet: #c79bff;
+    --glass-top: rgba(70, 105, 180, .78);
+    --glass-bot: rgba(14, 26, 72, .88);
+    --edge: rgba(225, 238, 255, .78);
+    --line: rgba(160, 210, 255, .16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    color: var(--ink); font-family: Cinzel, Georgia, serif; line-height: 1.55; letter-spacing: .3px;
+    background: var(--deep);
+    background-image:
+      radial-gradient(ellipse 120% 60% at 50% -10%, rgba(120, 200, 255, .45), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 100% 60%, rgba(150, 90, 220, .22), transparent 60%),
+      linear-gradient(180deg, var(--sea) 0%, var(--ocean) 30%, var(--deep) 100%);
+    background-attachment: fixed;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Rayons de lumière sous l'eau */
+  body::before { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: repeating-linear-gradient(100deg, transparent 0 60px, rgba(180, 230, 255, .05) 60px 90px, transparent 90px 170px);
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 70%); mask-image: linear-gradient(180deg, #000, transparent 70%); }
+  body.locked { overflow: hidden; }
+  .pyre { position: fixed; width: 6px; height: 6px; border-radius: 50%; background: #d8f4ff; pointer-events: none;
+    box-shadow: 0 0 10px 4px rgba(140, 215, 255, .7); animation: rise linear infinite; opacity: 0; z-index: 21; }
+  @keyframes rise { 10% { opacity: .9; } 85% { opacity: .5; } to { transform: translate(var(--dx), -105vh); opacity: 0; } }
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+
+  .title { font-family: Cinzel, serif; font-weight: 700; letter-spacing: 3px; color: #fff;
+    text-shadow: 0 0 14px rgba(140, 210, 255, .9), 0 0 2px #fff; }
+  main { max-width: 520px; margin: 0 auto; padding: 24px 16px 64px; position: relative; z-index: 2; }
+  a { color: var(--gold); }
+
+  /* Fenêtre façon FFX : verre bleu, fin cadre doré et quatre coins dorés (dessinés en dégradés) */
+  .win { --c: rgba(255, 215, 106, .95);
+    background:
+      linear-gradient(var(--c), var(--c)) left 7px top 7px / 14px 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) left 7px top 7px / 2px 14px no-repeat,
+      linear-gradient(var(--c), var(--c)) right 7px top 7px / 14px 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) right 7px top 7px / 2px 14px no-repeat,
+      linear-gradient(var(--c), var(--c)) left 7px bottom 7px / 14px 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) left 7px bottom 7px / 2px 14px no-repeat,
+      linear-gradient(var(--c), var(--c)) right 7px bottom 7px / 14px 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) right 7px bottom 7px / 2px 14px no-repeat,
+      linear-gradient(180deg, var(--glass-top), var(--glass-bot));
+    border: 1px solid rgba(255, 215, 106, .6); border-radius: 4px;
+    box-shadow: inset 0 0 0 4px rgba(4, 11, 28, .45), inset 0 0 0 5px rgba(255, 215, 106, .22), 0 0 26px rgba(110, 175, 255, .28);
+    padding: 20px 22px; text-shadow: 1px 1px 0 rgba(0, 0, 0, .6); color: #fff; text-align: left; }
+  .btn { display: inline-block; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 2px; font-size: 15px; color: #0b1a3a;
+    background: linear-gradient(180deg, #fff3c4, var(--gold)); border: 0; border-radius: 5px; padding: 12px 20px;
+    box-shadow: 0 0 16px rgba(255, 215, 106, .45); text-decoration: none; cursor: pointer; }
+  .btn:active { transform: translateY(2px); }
+  .btn:disabled { opacity: .5; }
+  /* Bouton « Ouvrir » de la lettre : texte doré lumineux entre deux ornements */
+  .open-letter { display: inline-flex; align-items: center; gap: 14px; text-decoration: none; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 5px; font-size: 18px;
+    color: var(--gold); text-shadow: 0 0 16px rgba(255, 215, 106, .9); animation: glowPulse 2.4s ease-in-out infinite; padding: 10px 0; }
+  .open-letter i { width: 9px; height: 9px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 10px rgba(255, 215, 106, .9); }
+  @keyframes glowPulse { 50% { opacity: .45; } }
+  /* Mode souvenir : relire la lettre et rejouer chaque chapitre */
+  .souvenirs { text-align: center; margin-top: 30px; }
+  .replay-list { display: grid; gap: 10px; }
+  .replay { display: flex; align-items: center; gap: 16px; padding: 16px 20px; color: #fff; text-decoration: none; font-weight: 700; letter-spacing: 1px; font-size: 15px; }
+  .replay b { min-width: 34px; color: var(--gold); font-size: 17px; text-shadow: 0 0 10px rgba(255, 215, 106, .7); }
+  .back-souvenir { position: fixed; top: 12px; left: 12px; z-index: 40; padding: 8px 12px; border-radius: 99px; text-decoration: none; font-family: Cinzel, serif; font-weight: 700;
+    letter-spacing: 2px; font-size: 12px; color: var(--gold); background: rgba(4, 11, 28, .75); border: 1px solid rgba(255, 215, 106, .6); }
+  .back-souvenir[hidden] { display: none; }
+  /* Lien discret : petites lettres FFX entre deux fins traits dorés */
+  .link-muted { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 34px auto 0; padding: 8px 4px;
+    font-family: Cinzel, serif; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
+    background: none; border: 0; cursor: pointer; transition: color .3s, text-shadow .3s; }
+  .link-muted::before, .link-muted::after { content: ""; width: 34px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 215, 106, .7)); }
+  .link-muted::after { transform: scaleX(-1); }
+  .link-muted:hover, .link-muted:focus { color: #fff; text-shadow: 0 0 10px rgba(140, 210, 255, .9); }
+
+  /* ---------- Écrans plein écran (chapitres) ---------- */
+  #overlay { position: fixed; inset: 0; z-index: 20; display: flex; overflow-y: auto; padding: 56px 16px 160px; text-align: center;
+    background: radial-gradient(ellipse 120% 60% at 50% 0%, rgba(60, 140, 210, .5), transparent 60%), linear-gradient(180deg, #0a2346, #030914 80%);
+    transition: opacity .6s; }
+  #overlay.hide { opacity: 0; pointer-events: none; }
+  .screen { display: none; width: 100%; max-width: 460px; }
+  .screen.on { display: block; margin: auto; }
+  .skip { position: fixed; top: 14px; right: 14px; z-index: 21; font-family: Cinzel, serif; letter-spacing: 2px; font-size: 12px; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 8px; display: none; }
+  .lock { font-family: Cinzel, serif; letter-spacing: 2px; font-size: 13px; color: var(--muted); margin-top: 28px; }
+  .lock b { display: block; color: var(--gold); font-size: 16px; margin-top: 4px; }
+  .flash { animation: flash .5s 3; }
+  @keyframes flash { 50% { background: #dff4ff; } }
+
+  /* Textes des fenêtres (dialogues, réponses) : même écriture élégante que la lettre */
+  .story { font-family: Cinzel, serif; font-weight: 700; font-size: 17px; line-height: 1.6; letter-spacing: .6px; }
+  /* Fenêtres de texte : version douce, bleu seul, sans cadre doré */
+  .win.story { background: linear-gradient(180deg, var(--glass-top), var(--glass-bot)); border: 1px solid rgba(225, 238, 255, .35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 0 24px rgba(110, 175, 255, .25); }
+  #dialog { position: fixed; left: 16px; right: 16px; bottom: 28px; z-index: 22; max-width: 520px; margin: 0 auto;
+    min-height: 100px; padding: 24px 26px 26px; display: none; cursor: pointer; white-space: pre-line; }
+  #dialog.show { display: block; }
+  #dialog::after { content: ""; position: absolute; right: 30px; bottom: 12px; border: 6px solid transparent; border-top-color: var(--gold); animation: blink .9s steps(2) infinite; }
+
+  /* Ch.1 · Mission */
+  .big-title { font-size: clamp(24px, 8vw, 32px); margin: 0 0 22px; }
+  /* Ordre de mission : même cadre doré que la lettre */
+  .mission-box { padding: 30px 26px 24px; text-align: center; }
+  .m-head { margin: 0 0 6px; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 4px; font-size: 12px; color: var(--cyan); text-transform: uppercase; }
+  .m-intro { margin: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 18px; letter-spacing: 1px; color: #fff; text-shadow: 0 0 12px rgba(140, 210, 255, .8); }
+  .m-divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 14px 0 12px; }
+  .m-divider::before, .m-divider::after { content: ""; width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+  .m-divider::after { transform: scaleX(-1); }
+  .m-divider i { width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 8px rgba(255, 215, 106, .9); }
+  .m-row { display: grid; grid-template-columns: 78px 1fr; gap: 12px; align-items: baseline; text-align: left; padding: 8px 0; border-top: 1px solid rgba(160, 210, 255, .14); }
+  .m-divider + .m-row { border-top: 0; }
+  .m-row span { font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; }
+  .m-row p { margin: 0; font-size: 15px; }
+  .inv-title { font-size: 16px; margin: 30px 0 8px; text-align: left; }
+  .inv { list-style: none; margin: 0; padding: 0; text-align: left; }
+  .inv label { display: flex; align-items: center; gap: 14px; padding: 13px 12px; margin-bottom: 8px; cursor: pointer; font-size: 15px;
+    border: 1px solid rgba(160, 210, 255, .25); border-radius: 6px; background: rgba(10, 20, 60, .45); transition: border-color .3s, background .3s; }
+  /* Case à cocher façon cristal FFX : un losange qui s'illumine en doré */
+  .inv input { appearance: none; -webkit-appearance: none; flex: none; width: 18px; height: 18px; margin: 0 4px; cursor: pointer;
+    transform: rotate(45deg); border: 1.5px solid rgba(200, 225, 255, .7); background: rgba(4, 11, 28, .6);
+    box-shadow: inset 0 0 6px rgba(140, 210, 255, .3); transition: background .3s, box-shadow .3s, border-color .3s; }
+  .inv input:checked { border-color: #fff3c4; background: radial-gradient(circle, #fffbe6, var(--gold) 60%, #c8901e);
+    box-shadow: 0 0 12px 3px rgba(255, 215, 106, .75); }
+  .inv label:has(input:checked) { border-color: rgba(255, 215, 106, .6); background: rgba(255, 215, 106, .08); }
+  .inv input:checked + span { color: var(--gold); }
+  #invDone { margin-top: 34px; animation: up .8s ease-out; }
+  #invDone .title { font-size: 20px; margin: 0; color: var(--gold); text-shadow: 0 0 14px rgba(255, 215, 106, .8); }
+  #invDone .lock { margin-top: 14px; }
+  @keyframes up { from { opacity: 0; transform: translateY(16px); } }
+
+  /* Ch.2 · Tableau des départs */
+  .board { padding: 22px 22px 16px; font-variant-numeric: tabular-nums; }
+  .board-head { display: flex; justify-content: space-between; font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: var(--cyan); padding-bottom: 10px; border-bottom: 1px solid rgba(255, 215, 106, .4); }
+  .row { display: grid; grid-template-columns: 62px 1fr 30px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid rgba(160, 210, 255, .12); font-weight: 600; color: var(--gold); }
+  .row:last-child { border-bottom: 0; }
+  .row .dest { font-family: Cinzel, serif; font-weight: 700; font-size: 15px; letter-spacing: 2px; }
+  .row.ours { color: #fff; text-shadow: 0 0 10px rgba(140, 210, 255, .9); }
+  .row.ours .dest { animation: blink 1.2s steps(2) infinite; }
+  .row.ours.found .dest { animation: none; color: var(--gold); }
+  .guess-q { font-family: Cinzel, serif; letter-spacing: 1px; font-size: 17px; margin: 24px 0 14px; }
+  .guess-form { display: flex; gap: 8px; }
+  .guess-form input { flex: 1; min-width: 0; font-family: Cinzel, serif; font-weight: 700; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; padding: 13px 14px; color: #fff;
+    background: rgba(4, 11, 28, .7); border: 1px solid rgba(255, 215, 106, .6); border-radius: 4px; box-shadow: inset 0 0 12px rgba(110, 175, 255, .2); }
+  .guess-form input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 14px rgba(255, 215, 106, .45); }
+  .guess-form input::placeholder { color: #7f96c0; }
+  /* Réponses de la devinette : même style que « Inventaire complet », sans cadre */
+  #feedback { margin: 22px 0 0; text-align: center; font-size: 20px; line-height: 1.5; color: var(--gold); text-shadow: 0 0 14px rgba(255, 215, 106, .8); min-height: 56px; display: none; white-space: pre-line; }
+  #feedback.show { display: block; }
+
+  /* Écran titre */
+  .title-name { font-size: clamp(40px, 13vw, 56px); margin: 0; }
+  .lvl { font-family: Cinzel, serif; letter-spacing: 3px; margin: 14px 0 10px; color: var(--muted); }
+  .lvl b { color: var(--gold); font-size: 22px; }
+  .xp { width: min(260px, 75vw); height: 8px; margin: 0 auto; border-radius: 4px; background: rgba(255, 255, 255, .12); border: 1px solid var(--edge); overflow: hidden; }
+  .xp i { display: block; height: 100%; width: 72%; background: linear-gradient(90deg, #6fd3ff, #c9f1ff); box-shadow: 0 0 10px #8fdcff; transition: width 1.4s ease-in; }
+  .xp.full i { width: 100%; }
+  .press { margin-top: 36px; font-family: Cinzel, serif; letter-spacing: 3px; font-size: 13px; color: var(--muted); animation: blink 1.4s steps(2) infinite; }
+
+  /* Ch.3 · Lettre / Ch.4 · Boss */
+  .env { width: 120px; height: 80px; margin: 0 auto 22px; border-radius: 6px; background: linear-gradient(180deg, #eaf4ff, #bcd6f2); position: relative;
+    box-shadow: 0 0 30px rgba(140, 210, 255, .5); animation: bob 2.4s ease-in-out infinite; }
+  .env::before { content: ""; position: absolute; inset: 0 0 40% 0; background: #a9c6e8; clip-path: polygon(0 0, 100% 0, 50% 100%); border-radius: 6px 6px 0 0; }
+  .orb { width: 110px; height: 110px; margin: 0 auto 22px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f3e6ff, #9a5bff 45%, #3b1670 80%); box-shadow: 0 0 40px rgba(160, 100, 255, .7); animation: pulse 1.6s ease-in-out infinite; }
+  .ghost-wrap { position: relative; width: 220px; height: 220px; margin: 0 auto 14px; display: grid; place-items: center; }
+  #ghost { width: 200px; animation: haunt 3s ease-in-out infinite;
+    filter: blur(var(--blur, 9px)) brightness(var(--light, .35)) drop-shadow(0 0 22px rgba(160, 100, 255, .7));
+    opacity: var(--op, .8); transition: filter 1.2s, opacity 1.2s, transform 1.2s; }
+  #ghost.fade { opacity: 0; transform: scale(.4); }
+  @keyframes haunt { 50% { translate: 0 -10px; } }
+  #bossOrb { position: absolute; margin: 0; }
+  #bMsg { min-height: 24px; margin: 12px 0 0; font-family: Cinzel, serif; letter-spacing: 1px; color: var(--gold); }
+  .orb { transition: opacity 1.2s, transform 1.2s, filter 1.2s; }
+  .orb.fade { animation: none; opacity: 0; transform: scale(.4); filter: blur(10px); }
+  .orb.gold { background: radial-gradient(circle at 35% 30%, #fffbe6, var(--gold) 45%, #8a5a00 85%); box-shadow: 0 0 50px rgba(255, 215, 106, .8); }
+  @keyframes pulse { 50% { transform: scale(1.06); } }
+  #bossEnd { display: none; }
+
+  /* ---------- Page ---------- */
+  .hero { text-align: center; padding: 28px 0 8px; }
+  .badge { display: inline-block; font-family: Cinzel, serif; letter-spacing: 3px; font-size: 12px; color: var(--gold); border: 1px solid rgba(255, 215, 106, .6); padding: 6px 12px; border-radius: 99px; }
+  .hero h1 { font-size: clamp(28px, 9vw, 38px); line-height: 1.25; margin: 18px 0 8px; }
+  .hero p { color: var(--muted); margin: 0; font-family: Cinzel, serif; letter-spacing: 2px; font-size: 15px; }
+  #nextChap { margin-top: 14px; font-family: Cinzel, serif; letter-spacing: 2px; font-size: 13px; color: var(--gold); }
+
+  section { margin-top: 48px; }
+  .sec-title { font-size: 19px; text-align: center; margin: 0 0 16px; }
+
+  /* Cartes façon réservation (Eurostar, Secret Garden) */
+  .card { border-radius: 14px; overflow: hidden; border: 1px solid rgba(225, 238, 255, .5); background: rgba(6, 14, 38, .85); box-shadow: 0 16px 40px rgba(0, 0, 0, .45); }
+  .card + .card { margin-top: 16px; }
+  .card-top { padding: 22px 18px; text-align: center; }
+  .card-top .brand { font-family: Cinzel, serif; font-weight: 700; letter-spacing: 4px; font-size: 20px; color: var(--gold); }
+  .card-top .sub { font-family: Cinzel, serif; letter-spacing: 3px; font-size: 11px; color: #dbe8f8; margin-top: 4px; }
+  .card-top.train { background: linear-gradient(135deg, #0f3b6b, #1d6aa8 60%, #3aa0d8); }
+  .card-top.garden { background: radial-gradient(circle at 20% 30%, #1f4a3a, transparent 55%), radial-gradient(circle at 85% 70%, #3b2a55, transparent 55%), #0b1a17; }
+  .ring { width: 58px; height: 58px; margin: 0 auto 10px; border: 1.5px solid var(--gold); border-radius: 50%; display: grid; place-items: center; }
+  .card-body { padding: 18px; background: rgba(240, 247, 255, .97); color: #142033; }
+  .card-body h3 { margin: 0 0 4px; font-size: 20px; }
+  .card-body .ref { color: #6a7890; font-size: 13px; margin: 0 0 12px; }
+  .line { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; padding: 8px 0; }
+  .line svg { width: 22px; height: 22px; stroke: #142033; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .line b { display: block; font-size: 16px; }
+  .line span { color: #4a5870; font-size: 14px; }
+  .route { display: flex; align-items: center; gap: 10px; margin: 4px 0 8px; }
+  .route .t { font-size: 26px; font-weight: 700; }
+  .route .arrow { flex: 1; height: 1px; background: #8a98b0; position: relative; }
+  .route .arrow::after { content: ""; position: absolute; right: -1px; top: -4px; border: 4px solid transparent; border-left-color: #8a98b0; }
+  .route .city { font-size: 13px; color: #4a5870; }
+  .seats { display: flex; gap: 10px; margin-top: 8px; }
+  .seat { flex: 1; text-align: center; background: #e2ecf8; border-radius: 10px; padding: 10px 6px; }
+  .seat small { display: block; font-size: 11px; letter-spacing: 1px; color: #6a7890; text-transform: uppercase; }
+  .seat b { font-size: 20px; }
+  .locked-body { position: relative; padding: 22px 18px; text-align: center; font-family: Cinzel, serif; letter-spacing: 2px; color: var(--muted); overflow: hidden; }
+  /* Chocobo en transparence derrière les épreuves (voir .with-choco plus bas) */
+  /* Chocobo qui flotte dans un halo doré, entouré de 3 lucioles */
+  .choco-stage { position: relative; height: 250px; display: grid; place-items: center; }
+  .choco-stage::before { content: ""; position: absolute; width: 190px; height: 190px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 215, 106, .35), transparent 70%); animation: aura 3s ease-in-out infinite; }
+  .choco { position: relative; display: block; width: 150px; filter: drop-shadow(0 0 18px rgba(255, 215, 106, .55)); animation: chocoFloat 4s ease-in-out infinite; }
+  .choco-fly { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: #fff4cf; box-shadow: 0 0 10px 4px rgba(255, 215, 106, .7); animation: chocoOrbit 6s linear infinite; }
+  .choco-btn { background: none; border: 0; cursor: pointer; }
+  @keyframes chocoFloat { 50% { transform: translateY(-12px); } }
+  @keyframes aura { 50% { transform: scale(1.15); opacity: .6; } }
+  @keyframes chocoOrbit { from { transform: rotate(0) translateX(105px) rotate(0); } to { transform: rotate(360deg) translateX(105px) rotate(-360deg); } }
+  #chocoIntro .rq-intro { margin: 0 0 18px; line-height: 1.5; }
+  .locked-body.with-choco::before { content: ""; position: absolute; inset: 8px 0; background: url(images/chocobo.png) center / contain no-repeat; opacity: .3; pointer-events: none; }
+  .locked-body > * { position: relative; }
+  .locked-body b { display: block; color: var(--gold); font-size: 16px; margin-top: 4px; }
+  .locked-body .quiz { letter-spacing: 0; color: #fff; margin-top: 0; }
+  .rq-intro { font-family: Cinzel, serif; letter-spacing: 1px; font-size: 14px; color: #c9daf0; margin: 0 0 4px; }
+  /* Sphères du Sphérier de FFX : elles s'allument en bleu à chaque bonne réponse */
+  .sphere { border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .25), rgba(10, 20, 60, .6)); }
+  .sphere.on { color: #04112a; border-color: #dff6ff; background: radial-gradient(circle at 35% 30%, #fff, var(--cyan) 55%, #2a7fc0);
+    box-shadow: 0 0 14px rgba(140, 210, 255, .9); }
+  #rMsg { min-height: 24px; margin: 12px 0 0; font-family: Cinzel, serif; letter-spacing: 1px; color: var(--gold); }
+  .secret { margin-top: 14px; border-top: 1px dashed #b8c6da; padding-top: 14px; text-align: center; }
+  .secret-btn { font-family: Cinzel, serif; font-weight: 700; letter-spacing: 1px; font-size: 14px; color: #fff; background: linear-gradient(180deg, #3a63b8, #16295e);
+    border: 1px solid #0d1a3e; border-radius: 6px; padding: 10px 16px; cursor: pointer; }
+  .secret-val img { display: block; width: 210px; max-width: 80%; margin: 0 auto 10px; border-radius: 6px; }
+  .secret-val b { font-size: 17px; letter-spacing: 1px; }
+  .secret-val span { display: block; font-size: 12px; color: #6a7890; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Journal de quête */
+  .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .tab { flex: 1; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 2px; font-size: 13px; padding: 11px 4px; border-radius: 5px; cursor: pointer;
+    background: transparent; color: var(--muted); border: 1px solid rgba(160, 210, 255, .3); }
+  .tab[aria-selected="true"] { color: #fff; border-color: var(--edge); background: linear-gradient(180deg, var(--glass-top), var(--glass-bot)); box-shadow: 0 0 14px rgba(110, 175, 255, .3); }
+  .tab.is-locked { opacity: .5; }
+  .sun-locked { text-align: center; padding: 34px 12px; border: 1px dashed rgba(160, 210, 255, .35); border-radius: 10px; font-family: Cinzel, serif; letter-spacing: 2px; color: var(--muted); }
+  .sun-locked p { margin: 0 0 8px; }
+  .sun-locked b { display: block; color: var(--gold); font-size: 16px; }
+  .day-sub { font-size: 14px; color: var(--muted); margin: 0 0 6px; text-align: center; }
+  .quest { list-style: none; margin: 0; padding: 0; }
+  .quest li { display: grid; grid-template-columns: 56px 1fr; gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .quest .time { font-family: Cinzel, serif; font-weight: 700; color: var(--cyan); font-size: 15px; }
+  .quest h3 { margin: 0 0 3px; font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+  .quest p { margin: 0; font-size: 13.5px; color: #c9daf0; }
+  .quest li.boss h3 { color: var(--gold); }
+  .links { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .links a { font-size: 12px; text-decoration: none; border: 1px solid rgba(255, 215, 106, .55); color: var(--gold); border-radius: 99px; padding: 3px 10px; }
+  .links button { font: inherit; font-size: 12px; cursor: pointer; background: rgba(255, 215, 106, .12); border: 1px solid rgba(255, 215, 106, .55); color: var(--gold); border-radius: 99px; padding: 3px 10px; }
+  .links a.photo { border-color: rgba(199, 155, 255, .65); color: var(--violet); }
+  .side { margin-top: 18px; padding: 14px 16px; border: 1px dashed rgba(255, 215, 106, .5); border-radius: 10px; }
+  .side h3 { margin: 0 0 4px; font-size: 15px; color: var(--gold); }
+  .side p { margin: 0; font-size: 14px; color: #c9daf0; }
+
+  /* Maillot */
+  .jersey-wrap { text-align: center; margin-top: 22px; }
+  /* Verrou : cadenas qui tremble au centre de 8 cristaux qui tournent */
+  .lock-ring { position: relative; width: 190px; height: 190px; margin: 18px auto 0; }
+  .lock-ring .orbit { position: absolute; inset: 0; animation: spin 24s linear infinite; }
+  .lock-ring .orbit span { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px; transform: rotate(calc(var(--i) * 45deg)) translateY(-84px) rotate(45deg);
+    border: 1px solid rgba(255, 215, 106, .8); background: rgba(4, 11, 28, .7); box-shadow: 0 0 8px rgba(255, 215, 106, .4); transition: background .6s, box-shadow .6s; }
+  .lock-ring .orbit span.on { background: radial-gradient(circle, #fffbe6, var(--gold) 60%, #c8901e); box-shadow: 0 0 14px 3px rgba(255, 215, 106, .85); }
+  .lock-ring .padlock { position: absolute; left: 50%; top: 50%; width: 78px; margin: -42px 0 0 -39px; filter: drop-shadow(0 0 16px rgba(255, 215, 106, .7)); animation: shake 3s ease-in-out infinite; }
+  .force-title { font-size: 20px; margin: 18px 0 18px; line-height: 1.35; }
+  .force-btn { animation: ctaPulse 2.4s ease-in-out infinite; }
+  .force-btn[hidden] { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes shake { 0%, 84%, 100% { transform: rotate(0); } 87% { transform: rotate(-10deg); } 91% { transform: rotate(10deg); } 95% { transform: rotate(-6deg); } }
+  @keyframes ctaPulse { 50% { transform: scale(1.05); box-shadow: 0 0 34px rgba(255, 215, 106, .9); } }
+  .lie { margin-top: 18px; text-align: center; }
+  .lie b { font-family: Cinzel, serif; letter-spacing: 2px; color: var(--gold); display: block; margin-bottom: 6px; }
+  .jersey { width: 210px; max-width: 65vw; cursor: pointer; filter: drop-shadow(0 0 24px rgba(140, 210, 255, .35)); }
+  .jersey.turn { animation: turn .7s ease-in-out; }
+  @keyframes turn { 50% { transform: rotateY(90deg) scale(.95); } }
+  .jersey-label { font-family: Cinzel, serif; letter-spacing: 2px; font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  .jersey-quote { margin: 18px 0 0; font-size: 15px; }
+  .slots { display: flex; justify-content: center; gap: 6px; margin: 14px 0 0; }
+  .slot { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(160, 210, 255, .4); display: grid; place-items: center;
+    font-family: Cinzel, serif; font-weight: 700; font-size: 13px; color: var(--muted); }
+  .slot.on { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 12px rgba(255, 215, 106, .6); }
+  .quiz { margin-top: 20px; text-align: center; }
+  .quiz .step { font-family: Cinzel, serif; letter-spacing: 2px; font-size: 12px; color: var(--cyan); margin: 0 0 6px; }
+  .quiz .q { margin: 0 0 14px; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 1px; font-size: 16px; line-height: 1.45; }
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .choices button { font-family: Cinzel, serif; font-weight: 700; letter-spacing: 1px; font-size: 14px; color: #fff; padding: 11px 6px; border-radius: 5px; cursor: pointer;
+    background: rgba(10, 20, 60, .7); border: 1px solid rgba(160, 210, 255, .4); }
+  .choices button.good { background: linear-gradient(180deg, #fff3c4, var(--gold)); color: #0b1a3a; }
+  .choices button.bad { opacity: .35; }
+  .choices button.blink { animation: blink .8s steps(2) infinite; border-color: var(--gold); }
+  #qMsg { min-height: 24px; margin: 12px 0 0; font-family: Cinzel, serif; letter-spacing: 1px; color: var(--gold); }
+  #qNext { margin-top: 12px; font-size: 13px; padding: 10px 16px; }
+  #qNext[hidden] { display: none; }
+
+  /* Sauvegarde */
+  .save .win { text-align: center; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 2px; font-size: 17px; }
+  .save-btns { display: flex; justify-content: center; gap: 36px; margin-top: 10px; }
+  .save-btns button { font-family: Cinzel, serif; font-weight: 700; letter-spacing: 2px; font-size: 16px; color: #fff; background: none; border: 0; cursor: pointer; padding: 6px; }
+  .save-btns button:hover, .save-btns button:focus { color: var(--gold); text-shadow: 0 0 10px rgba(255, 215, 106, .7); }
+  #saved { display: none; margin-top: 14px; text-align: center; font-family: Cinzel, serif; letter-spacing: 2px; color: var(--gold); }
+
+  footer { text-align: center; margin-top: 50px; font-family: Cinzel, serif; letter-spacing: 3px; font-size: 12px; color: var(--muted); }
+
+  /* Mot de passe */
+  #codeModal { position: fixed; inset: 0; z-index: 25; background: rgba(2, 6, 18, .88); display: flex; overflow-y: auto; padding: 24px 16px; }
+  #codeModal[hidden] { display: none; }
+  #codeForm { width: 100%; max-width: 420px; margin: auto; text-align: center; font-size: 16px; }
+  #codeForm .title { display: block; font-size: 17px; margin-bottom: 14px; }
+  #codeInput { width: 100%; font-family: Cinzel, serif; font-weight: 700; font-size: 22px; letter-spacing: 8px; text-align: center; padding: 12px 6px; border-radius: 5px; border: 1px solid var(--edge); background: rgba(10, 20, 60, .85); color: #fff; }
+  #codeInput::placeholder { color: #5f76a8; }
+  #codeMsg { min-height: 24px; margin: 12px 0 4px; font-family: Cinzel, serif; letter-spacing: 1px; color: var(--gold); }
+  .code-btns { display: flex; justify-content: center; gap: 30px; }
+  .code-btns button { font-family: Cinzel, serif; font-weight: 700; letter-spacing: 2px; font-size: 15px; color: #fff; background: none; border: 0; cursor: pointer; padding: 6px; }
+  .code-btns button:hover, .code-btns button:focus { color: var(--gold); }
+
+  canvas#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 30; }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s, transform .7s; }
+  .reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body class="locked">
+<canvas id="confetti"></canvas>
+<!-- Quand on rejoue un chapitre depuis les souvenirs : lien pour revenir -->
+<a class="back-souvenir" id="backSouvenir" href="index.html" hidden>◆ SOUVENIRS</a>
+
+<div id="overlay">
+  <button class="skip" id="skip">PASSER</button>
+
+  <!-- Chapitre 1 · vendredi soir -->
+  <div class="screen" id="sMission">
+    <p class="big-title title">Mission secrète</p>
+    <div class="win mission-box">
+      <p class="m-head">Ordre de mission</p>
+      <p class="m-intro">Deniz, une quête t'attend demain.</p>
+      <div class="m-divider"><i></i></div>
+      <div class="m-row"><span>Bagage</span><p>Un petit sac pour une nuit</p></div>
+      <div class="m-row"><span>Réveil</span><p>4h30 (oui oui)</p></div>
+      <div class="m-row"><span>Départ</span><p>Train de 5h25</p></div>
+      <div class="m-row"><span>Règle</span><p>Interdiction de poser des questions</p></div>
+    </div>
+    <div id="invList">
+      <p class="inv-title title">Inventaire</p>
+      <ul class="inv">
+        <li><label><input type="checkbox"><span>Un change</span></label></li>
+        <li><label><input type="checkbox"><span>Ta brosse à dents</span></label></li>
+        <li><label><input type="checkbox"><span>Ton chargeur</span></label></li>
+        <li><label><input type="checkbox"><span>Ta carte d'identité</span></label></li>
+      </ul>
+    </div>
+    <!-- Remplace la liste une fois tout coché -->
+    <div id="invDone" hidden>
+      <p class="title">Inventaire complet</p>
+      <p class="lock">Chapitre 2 dans<b id="lockMission"></b></p>
+    </div>
+  </div>
+
+  <!-- Chapitre 2 · gare du Nord (horaires volontairement faux pour ne pas aider à deviner) -->
+  <div class="screen" id="sGuess">
+    <div class="board win">
+      <div class="board-head"><span>DEPARTS</span><span>PARIS NORD</span></div>
+      <div class="row"><span>06:52</span><span class="dest">LONDON</span><span>12</span></div>
+      <div class="row ours" id="ourRow"><span>??:??</span><span class="dest" id="ourDest">? ? ? ? ?</span><span>?</span></div>
+      <div class="row"><span>07:46</span><span class="dest">BRUXELLES</span><span>4</span></div>
+      <div class="row"><span>08:17</span><span class="dest">LONDON</span><span>11</span></div>
+    </div>
+    <p class="guess-q title">L'an dernier : Venise.<br>Cette année… devine !</p>
+    <form class="guess-form" id="guessForm" autocomplete="off">
+      <input id="guessInput" placeholder="Destination" aria-label="Destination">
+      <button class="btn" id="guessBtn">OK</button>
+    </form>
+    <div id="feedback" class="title"></div>
+  </div>
+
+  <!-- Écran titre (après la bonne réponse) -->
+  <div class="screen" id="sTitle">
+    <p class="title-name title">DENIZ</p>
+    <p class="lvl">NIVEAU <b id="lvl">32</b></p>
+    <div class="xp" id="xp"><i></i></div>
+    <p class="press" id="press">TOUCHE POUR CONTINUER</p>
+  </div>
+
+  <!-- Chapitre 3 · le resto -->
+  <div class="screen" id="sLetter">
+    <div class="env"></div>
+    <p class="title" style="font-size:19px;margin:0">Deniz, une lettre t'attend…</p>
+    <p style="margin:26px 0 0"><a class="open-letter" href="mot.html"><i></i>OUVRIR<i></i></a></p>
+    <button class="link-muted" data-close>voir le programme du week-end</button>
+  </div>
+
+  <!-- Chapitre 4 · retour à la maison -->
+  <div class="screen" id="sBoss">
+    <div id="bossStart">
+      <!-- Ectoplasma, d'abord une ombre floue ; il devient plus net à chaque badge -->
+      <div class="ghost-wrap">
+        <img id="ghost" src="images/ectoplasma.png" alt="Ectoplasma">
+        <div class="orb gold" id="bossOrb" hidden></div>
+      </div>
+      <p class="title" id="bossText" style="font-size:17px;margin:0">Quelque chose approche…</p>
+      <p class="press" id="bossPress">TOUCHE</p>
+      <div class="win quiz" id="bossQuiz" hidden>
+        <div class="slots" id="badges"></div>
+        <p class="step" id="bStep" style="margin-top:12px"></p>
+        <p class="q" id="bText"></p>
+        <div class="choices" id="bChoices"></div>
+        <p id="bMsg"></p>
+      </div>
+    </div>
+    <div id="bossEnd">
+      <div class="orb gold"></div>
+      <p class="title" style="font-size:16px;margin:0;color:var(--gold)">Quête finale</p>
+      <p class="title" style="font-size:20px;margin:10px 0 0">Ouvre le coffre<br>de ta voiture</p>
+      <button class="link-muted" data-close>revoir le week-end</button>
+    </div>
+  </div>
+
+  <div id="dialog" class="win story"></div>
+</div>
+
+<main>
+  <header class="hero reveal">
+    <span class="badge" id="heroBadge">NIVEAU 33 DÉBLOQUÉ</span>
+    <h1 class="title">Joyeux anniversaire Deniz</h1>
+    <p id="heroSub">Une nouvelle quête commence…</p>
+    <p id="nextChap"></p>
+  </header>
+
+  <!-- Mode souvenir (à partir du lundi 21 décembre) : tout est débloqué, et on peut tout revivre -->
+  <section class="souvenirs" id="souvenirs" hidden>
+    <a class="open-letter" href="mot.html"><i></i>RELIRE LA LETTRE<i></i></a>
+    <h2 class="sec-title title" style="margin-top:40px">Rejouer un chapitre</h2>
+    <div class="replay-list">
+      <a class="win replay" href="index.html?chapitre=1&amp;souvenir"><b>I</b>La mission secrète</a>
+      <a class="win replay" href="index.html?chapitre=2&amp;souvenir"><b>II</b>La devinette de la gare</a>
+      <a class="win replay" href="index.html?chapitre=3&amp;souvenir"><b>III</b>La lettre au resto</a>
+      <a class="win replay" href="index.html?chapitre=verrou&amp;souvenir"><b>IV</b>Le verrou du dimanche</a>
+      <a class="win replay" href="index.html?chapitre=retour&amp;souvenir"><b>V</b>Le chocobo du retour</a>
+      <a class="win replay" href="index.html?chapitre=4&amp;souvenir"><b>VI</b>Ectoplasma</a>
+    </div>
+  </section>
+
+  <!-- Billets Eurostar -->
+  <section class="reveal">
+    <h2 class="sec-title title">Objets rares obtenus</h2>
+    <div class="card">
+      <div class="card-top train">
+        <div class="brand">EUROSTAR</div>
+        <div class="sub">ALLER · SAMEDI 19 DÉCEMBRE 2026</div>
+      </div>
+      <div class="card-body">
+        <h3>Paris → Amsterdam</h3>
+        <p class="ref">Train 9309 · Standard · Monture de secours : Chocobo</p>
+        <div class="route"><div><div class="t">07:23</div><div class="city">Paris Nord</div></div><div class="arrow"></div><div style="text-align:right"><div class="t">10:50</div><div class="city">Amsterdam Centraal</div></div></div>
+        <div class="line"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>Arrivée en gare à 07:03</b><span>Embarquement au plus tard 10 min avant</span></div></div>
+        <div class="seats"><div class="seat"><small>Voiture</small><b>17</b></div><div class="seat"><small>Deniz</small><b>38</b></div><div class="seat"><small>Ocho</small><b>37</b></div></div>
+        <div class="secret" data-secret="aller"><button type="button" class="secret-btn" data-unlock data-part="aller">Afficher le billet de Deniz</button></div>
+      </div>
+    </div>
+    <!-- Billet retour : verrouillé jusqu'au dimanche 17h00, puis 6 épreuves Final Fantasy pour l'obtenir -->
+    <div class="card" id="retourLocked">
+      <div class="card-top train">
+        <div class="brand">EUROSTAR</div>
+        <div class="sub">RETOUR · VERROUILLÉ</div>
+      </div>
+      <div class="locked-body" id="retourBody">
+        <div id="retourWait">Disponible dans<b id="lockRetour"></b></div>
+        <!-- Dimanche : le chocobo propose un raccourci pour avoir le billet avant 17h -->
+        <div id="chocoIntro" hidden>
+          <div class="choco-stage">
+            <img class="choco" src="images/chocobo.png" alt="Chocobo">
+            <i class="choco-fly"></i><i class="choco-fly" style="animation-delay:-2s"></i><i class="choco-fly" style="animation-delay:-4s"></i>
+          </div>
+          <h3 class="force-title title">Un chocobo t'attend…</h3>
+          <p class="rq-intro">Réussis les 8 épreuves de Gaïa et de Spira, et ton billet retour est à toi tout de suite.</p>
+          <button type="button" class="open-letter choco-btn" id="chocoBtn"><i></i>EN SELLE<i></i></button>
+        </div>
+        <div class="quiz" id="retourQuiz" hidden>
+          <p class="rq-intro">Pour récupérer ton billet retour, réussis les 8 épreuves de Gaïa et de Spira.</p>
+          <div class="slots" id="spheres"></div>
+          <p class="step" id="rStep" style="margin-top:12px"></p>
+          <p class="q" id="rText"></p>
+          <div class="choices" id="rChoices"></div>
+          <p id="rMsg"></p>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="retourCard" hidden>
+      <div class="card-top train">
+        <div class="brand">EUROSTAR</div>
+        <div class="sub">RETOUR · DIMANCHE 20 DÉCEMBRE 2026</div>
+      </div>
+      <div class="card-body">
+        <h3>Amsterdam → Paris</h3>
+        <p class="ref">Train 9388 · Standard</p>
+        <div class="route"><div><div class="t">19:10</div><div class="city">Amsterdam Centraal</div></div><div class="arrow"></div><div style="text-align:right"><div class="t">22:38</div><div class="city">Paris Nord</div></div></div>
+        <div class="line"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>Arrivée en gare à 18:50</b><span>Embarquement au plus tard 5 min avant</span></div></div>
+        <div class="seats"><div class="seat"><small>Voiture</small><b>18</b></div><div class="seat"><small>Deniz</small><b>107</b></div><div class="seat"><small>Ocho</small><b>108</b></div></div>
+        <div class="secret" data-secret="retour"><button type="button" class="secret-btn" data-unlock data-part="retour">Afficher le billet de Deniz</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <h2 class="sec-title title">Journal de quête</h2>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-day="sat">SAMEDI 19</button>
+      <button class="tab" role="tab" aria-selected="false" data-day="sun">DIMANCHE 20</button>
+    </div>
+
+    <div id="sat">
+      <p class="day-sub">Arrivée, shopping, lumières & Quartier Rouge pimenté</p>
+      <ul class="quest">
+        <li><span class="time">10:50</span><div><h3>Arrivée à Amsterdam Centraal</h3><p>Premier arrêt : Victoria's Secret.</p>
+          <div class="links"><a data-maps="Victoria's Secret, Amsterdam Centraal">Victoria's Secret</a><a class="photo" data-maps="Damrak, Amsterdam">Spot photo · Maisons du Damrak</a></div></div></li>
+        <li><span class="time">11:30</span><div><h3>Arrivée à l'Hotel</h3><p>On pose les sacs à l'Hotel (à 15 min de la gare). Puis balade photos : le pont face au café De Jaren, le coin de Staalkade et les canaux du Kloveniersburgwal.</p>
+          <div class="links"><a data-maps="Kloveniersburgwal 137, Amsterdam">Hotel</a><a data-maps="Café De Jaren, Nieuwe Doelenstraat 20, Amsterdam">Café De Jaren</a><a data-maps="Staalkade, Amsterdam">Staalkade</a><a class="photo" data-maps="Beurspassage, Amsterdam">Spot photo · Beurspassage</a></div></div></li>
+        <li><span class="time">12:15</span><div><h3>Chasse aux affiches pour VV</h3><p>Spot n°1 : Movie Ink (Oudezijds Achterburgwal 125), pour Hitchcock. (à 5 min de l'hôtel)</p>
+          <div class="links"><a data-maps="Oudezijds Achterburgwal 125, Amsterdam">Movie Ink</a></div></div></li>
+        <li><span class="time">13:00</span><div><h3>Frites légendaires</h3><p>Déjeuner vers le Spui chez Vleminckx, biscuits chez Van Stapele, et l'entrée secrète du Begijnhof, le jardin caché du Spui.</p>
+          <div class="links"><a href="https://share.google/SbbLo4EdMa6WvGLCg" target="_blank" rel="noopener">Vleminckx</a><a href="https://share.google/GoOqViwlaKzwDA551" target="_blank" rel="noopener">Van Stapele</a><a data-maps="Begijnhof, Amsterdam">Begijnhof</a></div></div></li>
+        <li><span class="time">14:00</span><div><h3>Fleurs & Fromage</h3><p>Le Marché aux fleurs Bloemenmarkt, puis du gouda chez Henri Willig ou à l'Old Amsterdam Cheese Store.</p>
+          <div class="links"><a data-maps="Bloemenmarkt, Amsterdam">Bloemenmarkt</a><a data-maps="Henri Willig, Amsterdam">Henri Willig</a><a data-maps="Old Amsterdam Cheese Store, Amsterdam">Old Amsterdam</a></div></div></li>
+        <li><span class="time">14:30</span><div><h3>Cinéma Tuschinski</h3><p>Photo dans le hall Art déco.</p>
+          <div class="links"><a data-maps="Pathé Tuschinski, Amsterdam">Tuschinski</a></div></div></li>
+        <li><span class="time">15:00</span><div><h3>Les Negen Straatjes</h3><p>Découverte des canaux du quartier des 9 rues.</p>
+          <div class="links"><a data-maps="De 9 Straatjes, Amsterdam">9 Straatjes</a></div></div></li>
+        <li><span class="time">15:30</span><div><h3>Shopping</h3><p>Alo (Wolvenstraat 19) et Intimissimi, au n°6 de la même rue.</p>
+          <div class="links"><a data-maps="Wolvenstraat 19, Amsterdam">Alo</a><a data-maps="Wolvenstraat 6, Amsterdam">Intimissimi</a></div></div></li>
+        <li><span class="time">17:00</span><div><h3>Balade Light Festival</h3><p>Les œuvres lumineuses du Amsterdam Light Festival, à pied, au bord des canaux, dans le noir magique. Départ d'Amstel 1, pause chocolat chaud au De Sluyswacht, la petite maison penchée.</p>
+          <div class="links"><a href="https://www.google.com/maps/dir/Amstel+1,+Amsterdam/Waterlooplein,+Amsterdam/Magere+Brug,+Amsterdam/Plantage+Muidergracht,+Amsterdam/Oosterdok,+Amsterdam/" target="_blank" rel="noopener">Parcours</a><a href="https://amsterdamlightfestival.com/en/walk" target="_blank" rel="noopener">Carte officielle</a><a data-maps="De Sluyswacht, Amsterdam">De Sluyswacht</a><a class="photo" data-maps="Magere Brug, Amsterdam">Spot photo · Magere Brug</a><a class="photo" data-maps="Reguliersgracht Seven Bridges, Amsterdam">Spot photo · Les 7 ponts</a></div></div></li>
+        <li class="boss"><span class="time">20:00</span><div><h3>Dîner d'anniversaire</h3><p>Table réservée au Secret Garden.</p>
+          <div class="links"><a href="https://share.google/HqhO4ad3B4F9pIwuF" target="_blank" rel="noopener">Secret Garden</a><button type="button" data-unlock="resaCard" data-part="resa">Réservation</button></div></div></li>
+        <li><span class="time">22:00</span><div><h3>Le Quartier Rouge</h3><p>De Wallen, et un petit achat… hum… chez Hot Stuff (Lange Niezel 23) ou Pure Lust (Oudehoogstraat).</p>
+          <div class="links"><a data-maps="Lange Niezel 23, Amsterdam">Hot Stuff</a><a data-maps="Pure Lust, Oudehoogstraat, Amsterdam">Pure Lust</a></div></div></li>
+      </ul>
+
+      <!-- Carte du resto : visible seulement après le mot de passe (bouton « Réservation » à 20:00) -->
+      <div class="card" id="resaCard" style="margin-top:22px" hidden>
+        <div class="card-top garden">
+          <div class="ring"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#ffd76a" stroke-width="1.4"><path d="M12 20c-4-2-6-6-6-10 3 0 5 2 6 5 1-3 3-5 6-5 0 4-2 8-6 10z"/><path d="M12 15c-1-3-1-6 0-9 1 3 1 6 0 9z"/></svg></div>
+          <div class="brand">SECRET GARDEN</div>
+          <div class="sub">AMSTERDAM</div>
+        </div>
+        <div class="card-body">
+          <h3>Dîner d'anniversaire</h3>
+          <p class="ref">Bar &amp; Lounge Dining</p>
+          <div class="line"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><div><b>Samedi 19 décembre 2026</b></div></div>
+          <div class="line"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>20:00 – 22:15</b><span>Table réservée pour 2 h</span></div></div>
+          <div class="line"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15 14.5c3 0 6 2 6 5.5"/></svg><div><b>Au nom de Deniz Basi</b><span>Table pour 2 · anniversaire signalé</span></div></div>
+          <div class="secret" data-secret="resa"><button type="button" class="secret-btn" data-unlock data-part="resa">Afficher le n° de réservation</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dimanche verrouillé : le maillot mystère fait croire qu'on peut forcer le verrou… -->
+    <div id="sunLocked" hidden>
+      <div class="sun-locked">
+        <p>Dimanche verrouillé</p>
+        <p>Disponible dans<b id="lockSun"></b></p>
+        <!-- Cadenas doré au centre d'un cercle de 8 cristaux (un par épreuve réussie) -->
+        <div class="lock-ring">
+          <div class="orbit" id="slots"></div>
+          <svg class="padlock" viewBox="0 0 64 76" aria-hidden="true">
+            <defs><linearGradient id="lockGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c4"/><stop offset=".55" stop-color="#ffd76a"/><stop offset="1" stop-color="#a8780f"/></linearGradient></defs>
+            <path d="M16 34V22a16 16 0 0 1 32 0v12" fill="none" stroke="url(#lockGold)" stroke-width="7" stroke-linecap="round"/>
+            <rect x="6" y="32" width="52" height="40" rx="8" fill="url(#lockGold)"/><circle cx="32" cy="50" r="5" fill="#6b4a00"/><rect x="30" y="52" width="4" height="10" rx="2" fill="#6b4a00"/>
+          </svg>
+        </div>
+        <h3 class="force-title title">Impossible d'attendre demain ?</h3>
+        <button type="button" class="btn force-btn" id="forceBtn">FORCER LE VERROU</button>
+      </div>
+      <div class="jersey-wrap" id="jerseyWrap" hidden>
+        <svg class="jersey" id="jersey" viewBox="0 0 200 200" role="img" aria-label="Maillot Deniz 33">
+          <defs>
+            <pattern id="stripes" width="24" height="200" patternUnits="userSpaceOnUse"><rect width="12" height="200" fill="#111"/><rect x="12" width="12" height="200" fill="#fff"/></pattern>
+            <pattern id="inter" width="28" height="200" patternUnits="userSpaceOnUse"><rect width="14" height="200" fill="#0a2fa0"/><rect x="14" width="14" height="200" fill="#111"/></pattern>
+            <linearGradient id="legend" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c4"/><stop offset=".5" stop-color="#ffd76a"/><stop offset="1" stop-color="#b58516"/></linearGradient>
+          </defs>
+          <path id="shirt" d="M62 18 L86 10 Q100 26 114 10 L138 18 L186 50 L166 88 L146 76 L146 188 L54 188 L54 76 L34 88 L14 50 Z" fill="#2a3a5e" stroke="#8fa6c8" stroke-width="5" stroke-linejoin="round"/>
+          <rect id="numBack" x="62" y="58" width="76" height="106" rx="8" fill="transparent"/>
+          <text id="jName" x="100" y="78" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="18" letter-spacing="2" fill="#c8d6ee">DENIZ</text>
+          <text id="jNum" x="100" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="64" fill="#c8d6ee">?</text>
+        </svg>
+        <p class="jersey-label" id="jLabel">Maillot mystère · 8 épreuves</p>
+        <div class="win quiz">
+          <p class="step" id="qStep"></p>
+          <p class="q" id="qText"></p>
+          <div class="choices" id="qChoices"></div>
+          <p id="qMsg"></p>
+          <button type="button" class="btn" id="qNext" hidden>Épreuve suivante</button>
+        </div>
+        <div class="win lie story" id="jLie" hidden></div>
+      </div>
+    </div>
+
+    <div id="sun" hidden>
+      <p class="day-sub">Jardin tropical, rues secrètes & retour</p>
+      <ul class="quest">
+        <li><span class="time">10:30</span><div><h3>Le Hortus Botanicus</h3><p>Une matinée au chaud dans le jardin tropical.</p>
+          <div class="links"><a data-maps="Hortus Botanicus, Amsterdam">Hortus</a></div></div></li>
+        <li><span class="time">11:45</span><div><h3>Chasse aux affiches pour VV, round 2</h3><p>La boutique du Rijksmuseum (Vermeer, Rembrandt, Museumstraat 1) et celle du Van Gogh Museum (Museumplein 6).</p>
+          <div class="links"><a data-maps="Rijksmuseum Shop, Museumstraat 1, Amsterdam">Rijksmuseum Shop</a><a data-maps="Van Gogh Museum, Museumplein 6, Amsterdam">Van Gogh Shop</a></div></div></li>
+        <li><span class="time">13:00</span><div><h3>Le Jordaan</h3><p>En tram puis à pied le long du Prinsengracht et de l'Egelantiersgracht : rues pavées, ponts fleuris et maisons penchées.</p>
+          <div class="links"><a data-maps="Jordaan, Amsterdam">Jordaan</a><a data-maps="Westerkerk, Prinsengracht 279, Amsterdam">Prinsengracht</a><a data-maps="Egelantiersgracht, Amsterdam">Egelantiersgracht</a><a class="photo" data-maps="Brouwersgracht, Amsterdam">Spot photo · Brouwersgracht</a></div></div></li>
+        <li><span class="time">15:30</span><div><h3>Déjeuner sur Haarlemmerdijk</h3><p>Au choix : la tarte aux pommes mythique de Winkel 43, les crêpes géantes de The Pancake Bakery ou les croques XXL de Monty's Toasties. Puis souvenirs et pauses gourmandes : stroopwafels fraîches, bulbes de tulipes d'hiver, mini gouda aromatisé.</p>
+          <div class="links"><a href="https://share.google/sKeA6DOPfCT4gA048" target="_blank" rel="noopener">Winkel 43</a><a href="https://share.google/bhb15OJLjAji2JD0B" target="_blank" rel="noopener">Pancake Bakery</a><a href="https://share.google/CnqMBB7p8saJY0czU" target="_blank" rel="noopener">Monty's</a></div></div></li>
+        <li><span class="time">18:30</span><div><h3>Retour à la gare</h3><p>On récupère les sacs à l'Hotel, direction Amsterdam Centraal pour le train de 19h10.</p>
+          <div class="links"><a data-maps="Kloveniersburgwal 137, Amsterdam">Hotel</a><a data-maps="Amsterdam Centraal">Amsterdam Centraal</a></div></div></li>
+      </ul>
+      <div class="side">
+        <h3>Quête annexe : De Poezenboot</h3>
+        <p>Le refuge pour chats… sur un bateau. Si on a le temps !</p>
+        <div class="links"><a href="https://depoezenboot.nl/en/visiting-information" target="_blank" rel="noopener">Infos visite</a><a data-maps="De Poezenboot, Singel 38G, Amsterdam">Y aller</a></div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="reveal save">
+    <div class="win">
+      Sauvegarder la partie ?
+      <div class="save-btns"><button data-save>Oui</button><button data-save>Oui</button></div>
+    </div>
+    <p id="saved">Partie sauvegardée · Bon voyage, joueur 1</p>
+  </section>
+
+  <footer>DENIZ · OCHO · 2026</footer>
+</main>
+
+<!-- Mot de passe pour les billets et la réservation -->
+<div id="codeModal" hidden>
+  <form class="win" id="codeForm" autocomplete="off">
+    <span class="title">Entre le mot de passe</span>
+    <input id="codeInput" inputmode="numeric" maxlength="8" placeholder="••••••••" aria-label="Mot de passe">
+    <p id="codeMsg"></p>
+    <div class="code-btns"><button type="submit">Valider</button><button type="button" id="closeCode">Retour</button></div>
+  </form>
+</div>
+
+<script src="billets.js"></script>
+
+<script>
+  // Mettre false si pas de PS5 : le chapitre 4 disparaît.
+  const PS5 = true;
+
+  // Horaires des chapitres (heure de Paris = heure d'Amsterdam)
+  const UNLOCK = {
+    gare:     '2026-12-19 05:00',
+    lettre:   '2026-12-19 19:30',
+    dimanche: '2026-12-20 04:00',
+    retour:   '2026-12-20 17:00',
+    souvenir: '2026-12-21 12:00',
+    boss:     '2026-12-20 23:00'
+  };
+  const toDate = s => new Date(s.replace(' ', 'T') + ':00+01:00');
+  const parisNow = () => new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Paris' }).slice(0, 16);
+
+  function currentChapter() {
+    const t = parisNow();
+    if (t >= UNLOCK.souvenir) return 'souvenir';
+    if (t < UNLOCK.gare) return 'mission';
+    if (t < UNLOCK.lettre) return 'gare';
+    if (t < UNLOCK.dimanche) return 'lettre';
+    if (t < UNLOCK.boss || !PS5) return 'dimanche';
+    return 'boss';
+  }
+  function untilText(s) {
+    let ms = toDate(s) - new Date();
+    if (ms <= 0) return 'maintenant !';
+    const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60, sec = Math.floor(ms / 1e3) % 60;
+    if (d > 0) return `${d} j ${h} h ${m} min`;
+    if (h > 0) return `${h} h ${m} min`;
+    return `${m} min ${sec} s`;
+  }
+
+  // ---------- Lumières flottantes (« pyreflies » de FFX) ----------
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('i');
+    p.className = 'pyre';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.bottom = '-10px';
+    p.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+    p.style.animationDuration = 9 + Math.random() * 9 + 's';
+    p.style.animationDelay = Math.random() * 12 + 's';
+    document.body.appendChild(p);
+  }
+
+  // Une nuée de lucioles qui monte du centre de l'écran
+  function pyreBurst() {
+    for (let i = 0; i < 26; i++) {
+      const p = document.createElement('i');
+      p.className = 'pyre';
+      p.style.left = 50 + (Math.random() * 30 - 15) + 'vw';
+      p.style.bottom = 40 + Math.random() * 15 + 'vh';
+      p.style.setProperty('--dx', (Math.random() * 200 - 100) + 'px');
+      p.style.animationDuration = 3 + Math.random() * 3 + 's';
+      p.style.animationDelay = Math.random() * .8 + 's';
+      p.style.animationIterationCount = '1';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 7000);
+    }
+  }
+
+  // ---------- Éclats de lucioles (à la place des confettis) ----------
+  // Les lumières jaillissent, ralentissent, puis remontent doucement en scintillant comme les pyreflies de FFX.
+  const cv = document.getElementById('confetti');
+  const cx = cv.getContext('2d');
+  let bits = [];
+  function resize() { cv.width = innerWidth; cv.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+  function confetti(x = innerWidth / 2, y = innerHeight / 3, n = 120) {
+    const colors = ['143, 220, 255', '255, 215, 106', '255, 255, 255', '199, 155, 255'];
+    const idle = bits.length === 0;
+    n = Math.round(n * .45);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, s = 2.5 + Math.random() * 6;
+      bits.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, r: 1 + Math.random() * 1.6,
+        c: colors[i % colors.length], tw: Math.random() * 6, life: 0, max: 110 + Math.random() * 90 });
+    }
+    if (idle) requestAnimationFrame(tick);
+  }
+  function tick() {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    bits = bits.filter(b => b.life++ < b.max);
+    cx.globalCompositeOperation = 'lighter';
+    for (const b of bits) {
+      b.vx *= .94; b.vy = b.vy * .94 - .035; b.x += b.vx + Math.sin(b.life / 14 + b.tw) * .4; b.y += b.vy;
+      const fade = Math.min(1, b.life / 8) * (1 - b.life / b.max);
+      const glow = fade * (.45 + .35 * Math.sin(b.life / 5 + b.tw));
+      const g = cx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r * 4);
+      g.addColorStop(0, `rgba(255, 255, 255, ${glow})`);
+      g.addColorStop(.25, `rgba(${b.c}, ${glow * .9})`);
+      g.addColorStop(1, `rgba(${b.c}, 0)`);
+      cx.fillStyle = g;
+      cx.beginPath(); cx.arc(b.x, b.y, b.r * 4, 0, Math.PI * 2); cx.fill();
+    }
+    cx.globalCompositeOperation = 'source-over';
+    if (bits.length) requestAnimationFrame(tick);
+  }
+
+  // ---------- Écrans ----------
+  const overlay = document.getElementById('overlay');
+  const skipBtn = document.getElementById('skip');
+  let screen = null;
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+    screen = id;
+    skipBtn.style.display = id === 'sTitle' ? 'block' : 'none';
+    overlay.scrollTop = 0;
+  }
+  function closeOverlay(party = true) {
+    dialog.classList.remove('show'); dlg = null;
+    overlay.classList.add('hide');
+    skipBtn.style.display = 'none';
+    document.body.classList.remove('locked');
+    setTimeout(() => { overlay.style.display = 'none'; }, 600);
+    if (party) confetti(innerWidth / 2, innerHeight / 4, 160);
+  }
+  skipBtn.addEventListener('click', () => closeOverlay());
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeOverlay(false)));
+
+  // ---------- Dialogues ----------
+  const dialog = document.getElementById('dialog');
+  let dlg = null, typing = false, timer;
+  function typeLine(text) {
+    const chars = Array.from(text);
+    let k = 0; typing = true; dialog.textContent = '';
+    clearInterval(timer);
+    timer = setInterval(() => {
+      dialog.textContent = chars.slice(0, ++k).join('');
+      if (k >= chars.length) { clearInterval(timer); typing = false; }
+    }, 35);
+  }
+  function startDialog(lines, onEnd, onLine = () => {}) {
+    dlg = { lines, i: 0, onEnd, onLine };
+    dialog.classList.add('show');
+    typeLine(lines[0]); onLine(0);
+  }
+  function advance() {
+    if (!dlg) return;
+    if (typing) { clearInterval(timer); dialog.textContent = dlg.lines[dlg.i]; typing = false; return; }
+    if (++dlg.i < dlg.lines.length) { typeLine(dlg.lines[dlg.i]); dlg.onLine(dlg.i); }
+    else { const end = dlg.onEnd; dlg = null; dialog.classList.remove('show'); end(); }
+  }
+
+  overlay.addEventListener('click', e => {
+    if (e.target.closest('button, a, input, label, form')) return;
+    if (dlg) return advance();
+    if (screen === 'sTitle' && !levelStarted) levelUp();
+    if (screen === 'sBoss' && !bossStarted) bossFight();
+  });
+
+  // ---------- Ch.1 · Inventaire ----------
+  const boxes = document.querySelectorAll('.inv input');
+  boxes.forEach(b => b.addEventListener('change', () => {
+    if ([...boxes].every(x => x.checked)) {
+      // Petite pause pour voir le dernier cristal s'allumer, puis la liste laisse place au compte à rebours.
+      setTimeout(() => {
+        document.getElementById('invList').hidden = true;
+        document.getElementById('invDone').hidden = false;
+        confetti(innerWidth / 2, innerHeight / 2, 120);
+      }, 600);
+    }
+  }));
+
+  // ---------- Ch.2 · Devine la destination ----------
+  const feedback = document.getElementById('feedback');
+  const input = document.getElementById('guessInput');
+  const wrong = [
+    [['londres', 'london'], 'Raté ! Trop de pluie là-bas.'],
+    [['bruxelles', 'brussel', 'belgique'], 'Presque… mais non !'],
+    [['rotterdam', 'lahaye', 'utrecht', 'paysbas', 'hollande'], 'Tu chauffes ! Le bon pays… mais pas la bonne ville !'],
+    [['cologne', 'koln', 'koeln', 'allemagne'], 'Non, mais t\'es pas si loin.'],
+    [['venise', 'venezia', 'venice', 'italie'], 'Ça, c\'était l\'an dernier !'],
+    [['lille'], 'On s\'est pas levés à 4h30 pour aller à Lille !'],
+    [['paris'], 'On y est déjà, Deniz…'],
+    [['marseille'], 'On aurait adoré… Mais non !'],
+    [['istanbul', 'turquie'], 'En train ? Ça ferait loin !'],
+    [['zanarkand', 'besaid', 'spira', 'luca'], 'Ça, c\'est dans Spira. Essaie sur Terre !']
+  ];
+  const misses = ['Raté ! Essaie encore.', 'Nope !', 'Toujours pas !', 'Non non non…'];
+  const hints = { 3: 'Indice : des tulipes et des vélos', 5: 'Indice : des canaux… et du fromage', 7: 'Ça commence par A et ça finit par M !' };
+  let tries = 0;
+  const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
+
+  function say(text) { feedback.textContent = text; feedback.classList.add('show'); }
+  document.getElementById('guessForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const g = norm(input.value);
+    if (!g) return;
+    if (g.startsWith('amster') || g === 'ams') return found();
+    tries++;
+    const hit = wrong.find(([keys]) => keys.some(k => g.includes(k)));
+    let msg = hit ? hit[1] : misses[(tries - 1) % misses.length];
+    if (hints[tries]) msg += '\n' + hints[tries];
+    say(msg);
+    input.value = '';
+  });
+
+  function found() {
+    input.disabled = true; document.getElementById('guessBtn').disabled = true;
+    const dest = document.getElementById('ourDest');
+    const row = document.getElementById('ourRow');
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let n = 0;
+    const flip = setInterval(() => {
+      dest.textContent = Array.from({ length: 9 }, () => letters[Math.random() * 26 | 0]).join('');
+      if (++n > 18) { clearInterval(flip); dest.textContent = 'AMSTERDAM'; row.classList.add('found'); }
+    }, 70);
+    setTimeout(() => {
+      say('BRAVO !!!\nC\'est notre train !');
+      confetti(innerWidth / 2, innerHeight / 2, 180);
+      if (!testMode) try { localStorage.setItem('deniz33-trouve', '1'); } catch (_) {}
+    }, 1400);
+    setTimeout(() => show('sTitle'), 4200);
+  }
+
+  // ---------- Montée de niveau ----------
+  let levelStarted = false;
+  const levelLines = [
+    'Quoi ?!',
+    'Deniz atteint le niveau 33 !',
+    'PV +33 · Charme +33 · Beauté… déjà au max.',
+    'Deniz a obtenu un objet rare !',
+    '2 billets pour AMSTERDAM !',
+    'Départ 7h23. Joueur 2 : Ocho'
+  ];
+  function levelUp() {
+    levelStarted = true;
+    document.getElementById('press').style.visibility = 'hidden';
+    document.getElementById('xp').classList.add('full');
+    setTimeout(() => {
+      document.getElementById('lvl').textContent = '33';
+      overlay.classList.add('flash');
+      confetti(innerWidth / 2, innerHeight / 2, 140);
+      startDialog(levelLines, () => closeOverlay(), i => { if (i === 4) confetti(innerWidth / 2, innerHeight / 2, 100); });
+    }, 1500);
+  }
+
+  // ---------- Ch.4 · Boss caché ----------
+  let bossStarted = false;
+  const q$ = id => document.getElementById(id);
+
+  // Ectoplasma, abandonné il y a longtemps : 8 énigmes pour gagner sa confiance (un badge par réponse).
+  // Chaque question a son propre message de réussite et 3 messages d'erreur, tous différents.
+  const ghost = document.getElementById('ghost');
+  const bossRounds = [
+    { q: 'À quel niveau Fantominus évolue-t-il en Spectrum ?', choices: ['Niveau 20', 'Niveau 25', 'Niveau 30', 'Niveau 35'], good: 'Niveau 25',
+      win: 'Ectoplasma s\'approche un peu…', miss: ['Ectoplasma ricane dans l\'ombre…', 'Il compte sur ses doigts… et se moque de toi.', 'Il bâille. Même Fantominus le saurait !'] },
+    { q: 'Quel membre du Conseil des 4 de Rouge et Bleu fait combattre des Ectoplasma ?', choices: ['Olga', 'Aldo', 'Agatha', 'Peter'], good: 'Agatha',
+      win: 'Ses yeux brillent moins fort…', miss: ['Ectoplasma te tire la langue.', 'Une vieille dame au fond de la salle soupire…', 'Ectoplasma tourne autour de toi en riant.'] },
+    { q: 'Quel est le talent d\'Ectoplasma dans Pokémon Émeraude ?', choices: ['Lévitation', 'Corps Maudit', 'Statik', 'Intimidation'], good: 'Lévitation',
+      win: 'Il flotte un peu plus près de toi…', miss: ['Ectoplasma traverse le mur et revient, déçu.', 'Il s\'enfonce dans le sol… puis remonte.', 'Ses pieds ne touchent même pas le sol. Indice !'] },
+    { q: 'Dans Rouge et Bleu, où trouve-t-on Fantominus ?', choices: ['Mont Sélénite', 'Tour Pokémon de Lavanville', 'Grotte Azurée', 'La Centrale'], good: 'Tour Pokémon de Lavanville',
+      win: 'Il se souvient de Lavanville…', miss: ['Une mélodie triste résonne au loin…', 'Ectoplasma secoue la tête. Pense aux fantômes…', 'Il pointe du doigt une ville violette…'] },
+    { q: 'Dans Rouge et Bleu, quel objet permet d\'identifier les fantômes de la Tour Pokémon ?', choices: ['Poké Flûte', 'Scope Sylphe', 'Carte Magnétique', 'Lunettes Noires'], good: 'Scope Sylphe',
+      win: 'Il te laisse enfin le voir clairement…', miss: ['« Fantôme ! Impossible de l\'identifier ! »', 'Ectoplasma se rend invisible un instant…', 'Il chuchote : « Sylphe SARL… »'] },
+    { q: 'Dans Rouge et Bleu, quel Pokémon fantôme bloque l\'escalier de la Tour Pokémon ?', choices: ['Spectrum', 'Ossatueur', 'Ectoplasma', 'Mélofée'], good: 'Ossatueur',
+      win: 'Il baisse les yeux, ému…', miss: ['Ectoplasma devient tout pâle…', 'Un petit Osselait pleure quelque part…', 'Il murmure : « une maman… »'] },
+    { q: 'Comment s\'appelle la région de Pokémon Émeraude ?', choices: ['Kanto', 'Johto', 'Hoenn', 'Sinnoh'], good: 'Hoenn',
+      win: 'Il ne s\'enfuit plus…', miss: ['Ectoplasma fait semblant de dormir.', 'Il dessine une carte pleine d\'eau dans les airs…', 'Il imite un Poussifeu… tu chauffes !'] },
+    { q: 'Quel Pokémon légendaire est sur la jaquette d\'Émeraude ?', choices: ['Groudon', 'Kyogre', 'Rayquaza', 'Latios'], good: 'Rayquaza',
+      win: 'Ectoplasma te fait confiance.', miss: ['Il lève les yeux vers le ciel…', 'Un grand dragon vert passe dans sa tête…', 'Il fait le geste d\'un serpent qui vole…'] }
+  ];
+  let bRound = 0, bMiss = 0, bLocked = false;
+  q$('badges').innerHTML = bossRounds.map((_, i) => `<span class="slot" id="b${i}">${i + 1}</span>`).join('');
+
+  function showBossRound() {
+    const r = bossRounds[bRound];
+    bMiss = 0; bLocked = false;
+    q$('bStep').textContent = `Badge ${bRound + 1} / ${bossRounds.length}`;
+    q$('bText').textContent = r.q;
+    q$('bMsg').textContent = '';
+    q$('bChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
+    q$('bChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => bossAnswer(b)));
+  }
+  function bossAnswer(b) {
+    if (bLocked) return;
+    const r = bossRounds[bRound];
+    if (b.textContent !== r.good) {
+      b.classList.add('bad');
+      q$('bMsg').textContent = r.miss[Math.min(bMiss, r.miss.length - 1)];
+      // Jamais bloquant : après 2 erreurs, la bonne réponse clignote.
+      if (++bMiss >= 2) [...q$('bChoices').children].find(x => x.textContent === r.good).classList.add('blink');
+      return;
+    }
+    bLocked = true;
+    b.classList.add('good'); b.classList.remove('blink');
+    q$('bMsg').textContent = r.win;
+    q$('b' + bRound).classList.add('on');
+    // L'ombre devient plus nette et plus lumineuse à chaque badge
+    const k = (bRound + 1) / bossRounds.length;
+    ghost.style.setProperty('--blur', (9 - 9 * k) + 'px');
+    ghost.style.setProperty('--light', (.35 + .65 * k).toFixed(2));
+    ghost.style.setProperty('--op', (.8 + .2 * k).toFixed(2));
+    const box = b.getBoundingClientRect();
+    confetti(box.left + box.width / 2, box.top, 50);
+    setTimeout(() => {
+      if (++bRound < bossRounds.length) return showBossRound();
+      q$('bossQuiz').hidden = true;
+      bossOutro();
+    }, 1400);
+  }
+
+  function bossFight() {
+    bossStarted = true;
+    overlay.classList.add('flash');
+    q$('bossPress').hidden = true;
+    q$('bossText').textContent = '';
+    startDialog([
+      'Hein ?! Une ombre violette approche…',
+      'Un ECTOPLASMA sauvage apparaît !',
+      'Il ne t\'attaque pas. Il te regarde.',
+      'Ectoplasma a été abandonné, il y a longtemps…',
+      'Depuis, il erre seul dans l\'ombre.',
+      'Pour gagner sa confiance, prouve que tu le connais vraiment.'
+    ], () => { q$('bossQuiz').hidden = false; showBossRound(); });
+  }
+
+  function bossOutro() {
+    // L'ombre se dissout en lucioles, et une boule dorée (l'objet légendaire) apparaît à sa place.
+    startDialog([
+      'Ectoplasma sourit. Pour la première fois, quelqu\'un est resté.',
+      'Il se dissout doucement en lucioles…',
+      'Là où il était, quelque chose brille.',
+      'Il t\'a laissé un cadeau. Un objet LÉGENDAIRE !',
+      'Le voyage est fini… mais pas la partie.',
+      'Indice : il a quatre roues'
+    ], () => {
+      document.getElementById('bossStart').style.display = 'none';
+      document.getElementById('bossEnd').style.display = 'block';
+      confetti(innerWidth / 2, innerHeight / 3, 200);
+    }, i => {
+      if (i === 1) { ghost.classList.add('fade'); pyreBurst(); }
+      if (i === 2) { q$('bossOrb').hidden = false; q$('bossText').textContent = ''; }
+      if (i === 3) confetti(innerWidth / 2, innerHeight / 3, 140);
+    });
+  }
+
+  // ---------- Onglets ----------
+  function selectDay(day) {
+    document.querySelectorAll('.tab').forEach(o => o.setAttribute('aria-selected', o.dataset.day === day));
+    document.getElementById('sat').hidden = day !== 'sat';
+    document.getElementById('sun').hidden = day !== 'sun' || !sundayOpen;
+    document.getElementById('sunLocked').hidden = day !== 'sun' || sundayOpen;
+  }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => selectDay(t.dataset.day)));
+
+  // ---------- Maillot mystère (dans le dimanche verrouillé) : 6 épreuves, 6 maillots ----------
+  const kits = {
+    om:     { label: 'OM · À jamais les premiers', body: '#ffffff', trim: '#2faee0', text: '#2faee0' },
+    bjk:    { label: 'Beşiktaş · Les Aigles noirs', body: 'url(#stripes)', trim: '#111111', text: '#d4af37', back: '#111111' },
+    real:   { label: 'Real Madrid · Los Blancos', body: '#ffffff', trim: '#c9a227', text: '#2b2b6b' },
+    inter:  { label: 'Inter · I Nerazzurri', body: 'url(#inter)', trim: '#111111', text: '#ffd76a', back: '#111111' },
+    mu:     { label: 'Manchester United · Red Devils', body: '#d81920', trim: '#111111', text: '#ffffff' },
+    bjk2:   { label: 'Beşiktaş · Maillot extérieur', body: '#ffffff', trim: '#111111', text: '#111111' },
+    fra:    { label: 'Équipe de France · Les Bleus', body: '#1d2a6b', trim: '#d0102b', text: '#ffffff' },
+    legend: { label: 'Maillot légendaire · Deniz 33', body: 'url(#legend)', trim: '#fff3c4', text: '#3a2a05' }
+  };
+  // 8 épreuves, chacune avec son message de réussite et 3 messages d'erreur, tous différents.
+  const footRounds = [
+    { q: 'Qui entraînait l\'OM lors de la victoire en Ligue des champions 1993 ?', choices: ['Gérard Gili', 'Raymond Goethals', 'Franz Beckenbauer', 'Jean Fernandez'], good: 'Raymond Goethals', kit: 'om',
+      win: 'Le sorcier belge. À jamais les premiers !', miss: ['Carton jaune !', 'Le Vélodrome siffle…', 'Même Basile Boli en tombe de sa chaise !'] },
+    { q: 'En quelle année Beşiktaş a-t-il inauguré son stade, le Vodafone Park ?', choices: ['2012', '2014', '2016', '2018'], good: '2016', kit: 'bjk',
+      win: 'L\'année où Talisca a rejoint les Aigles noirs !', miss: ['Hors-jeu !', 'Les Aigles noirs secouent la tête…', 'Pense à l\'arrivée de Talisca…'] },
+    { q: 'En quelle année Benzema a-t-il quitté Lyon pour rejoindre le Real Madrid ?', choices: ['2007', '2008', '2009', '2011'], good: '2009', kit: 'real',
+      win: 'L\'été 2009 ! Et il est né un 19 décembre… comme toi !', miss: ['Penalty manqué !', 'Karim lève un sourcil…', 'La même année que Cristiano Ronaldo…'] },
+    { q: 'Quel est le surnom de l\'Inter Milan ?', choices: ['I Rossoneri', 'I Nerazzurri', 'I Bianconeri', 'I Giallorossi'], good: 'I Nerazzurri', kit: 'inter',
+      win: 'Forza Inter !', miss: ['Ça, c\'est l\'autre club de Milan…', 'Mamma mia, non !', 'Noir et bleu… en italien !'] },
+    { q: 'Contre quel club Manchester United a-t-il gagné la finale de la Ligue des champions 1999 ?', choices: ['Juventus', 'Bayern Munich', 'Barcelone', 'Chelsea'], good: 'Bayern Munich', kit: 'mu',
+      win: 'Deux buts dans les arrêts de jeu. Légendaire !', miss: ['Sir Alex mâche son chewing-gum, furieux…', 'Raté ! Les Red Devils grimacent.', 'Indice : une équipe allemande…'] },
+    { q: 'En quelle année Beşiktaş a-t-il été fondé ?', choices: ['1903', '1905', '1907', '1923'], good: '1903', kit: 'bjk2',
+      win: 'Le plus ancien des trois grands d\'Istanbul !', miss: ['Ça, c\'est Galatasaray…', 'Ça, c\'est Fenerbahçe…', 'Indice : le plus ancien des trois grands…'] },
+    { q: 'Contre quel pays Payet a-t-il marqué le but de la victoire au match d\'ouverture de l\'Euro 2016 ?', choices: ['Albanie', 'Suisse', 'Roumanie', 'Islande'], good: 'Roumanie', kit: 'fra',
+      win: 'Une frappe dans la lucarne, et des larmes de joie !', miss: ['Le Stade de France retient son souffle…', 'Payet se gratte la tête…', 'C\'était le tout premier match…'] },
+    { q: 'Sur quelle île est né Dimitri Payet ?', choices: ['La Martinique', 'La Guadeloupe', 'La Réunion', 'La Corse'], good: 'La Réunion', kit: 'legend',
+      win: 'Le Payet de La Réunion, une légende !', miss: ['Carton rouge… mais on te laisse revenir.', 'Payet regarde vers l\'océan Indien…', 'Pense au volcan…'] }
+  ];
+  q$('slots').innerHTML = footRounds.map((_, i) => `<span id="s${i}" style="--i:${i}"></span>`).join('');
+  // Le bouton « Forcer le verrou » lance les épreuves du maillot
+  q$('forceBtn').addEventListener('click', () => {
+    q$('forceBtn').hidden = true;
+    q$('jerseyWrap').hidden = false;
+    q$('jerseyWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  let fRound = 0, fMiss = 0, fLocked = false, wonKits = [], shownKit = 0;
+  function wear(name, suffix = '') {
+    const k = kits[name], j = q$('jersey');
+    j.classList.remove('turn'); void j.getBoundingClientRect(); j.classList.add('turn');
+    setTimeout(() => {
+      q$('shirt').setAttribute('fill', k.body);
+      q$('shirt').setAttribute('stroke', k.trim);
+      q$('numBack').setAttribute('fill', k.back || 'transparent');
+      q$('jName').setAttribute('fill', k.text);
+      q$('jNum').setAttribute('fill', k.text);
+      q$('jNum').textContent = '33';
+      q$('jLabel').textContent = k.label + suffix;
+    }, 350);
+  }
+  function showFootRound() {
+    const r = footRounds[fRound];
+    fMiss = 0; fLocked = false;
+    q$('qStep').textContent = `Épreuve ${fRound + 1} / ${footRounds.length}`;
+    q$('qText').textContent = r.q;
+    q$('qMsg').textContent = '';
+    q$('qNext').hidden = true;
+    q$('qChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
+    q$('qChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => footAnswer(b)));
+  }
+  function footAnswer(b) {
+    if (fLocked) return;
+    const r = footRounds[fRound];
+    if (b.textContent === r.good) {
+      fLocked = true;
+      b.classList.add('good'); b.classList.remove('blink');
+      q$('qMsg').textContent = r.win;
+      q$('s' + fRound).classList.add('on');
+      wonKits.push(r.kit); shownKit = wonKits.length - 1;
+      const last = fRound === footRounds.length - 1;
+      wear(r.kit, last ? ' — touche pour changer' : '');
+      const box = b.getBoundingClientRect();
+      confetti(box.left + box.width / 2, box.top, last ? 160 : 60);
+      if (!last) q$('qNext').hidden = false;
+      else {
+        q$('qStep').textContent = 'Collection complète';
+        // … et la petite blague : le verrou ne cède pas.
+        setTimeout(() => {
+          const lie = q$('jLie');
+          lie.innerHTML = '<b>Verrou forcé… ?</b>Bravo, mais j\'ai menti : même un Gardien de Spira doit attendre l\'aube.<br>Dimanche reste verrouillé. Va dormir !';
+          lie.hidden = false;
+          lie.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 1800);
+      }
+    } else {
+      b.classList.add('bad');
+      q$('qMsg').textContent = r.miss[Math.min(fMiss, r.miss.length - 1)];
+      // Jamais bloquant : après 2 erreurs, la bonne réponse clignote.
+      if (++fMiss >= 2) [...q$('qChoices').children].find(x => x.textContent === r.good).classList.add('blink');
+    }
+  }
+  q$('qNext').addEventListener('click', () => { fRound++; showFootRound(); });
+  // Une fois les 3 maillots gagnés, toucher le maillot les fait défiler.
+  q$('jersey').addEventListener('click', () => {
+    if (wonKits.length < footRounds.length) return;
+    shownKit = (shownKit + 1) % wonKits.length;
+    wear(wonKits[shownKit], ' — touche pour changer');
+  });
+  showFootRound();
+
+  // ---------- Boutons Google Maps ----------
+  document.querySelectorAll('a[data-maps]').forEach(a => {
+    a.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(a.dataset.maps);
+    a.target = '_blank'; a.rel = 'noopener';
+  });
+
+  // ---------- Infos protégées par mot de passe ----------
+  // QR codes, n° de billets et n° de réservation sont chiffrés dans billets.js
+  // (outil : outils-anniv/chiffrer-billets.js). Un seul mot de passe débloque tout.
+  const codeModal = document.getElementById('codeModal');
+  const codeInput = document.getElementById('codeInput');
+  const codeMsg = document.getElementById('codeMsg');
+  const fromB64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function decryptSecrets(code) {
+    const { salt, iv, data } = window.BILLETS;
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(code), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: fromB64(salt), iterations: 250000, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(iv) }, key, fromB64(data));
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+  // Chaque bouton débloque seulement SA partie (billet aller, billet retour ou réservation) :
+  // il faut retaper le mot de passe pour chacune, et tout se reverrouille au bout d'1 minute.
+  const RELOCK_MS = 60 * 1000;
+  const lockedHtml = {}, relockTimers = {};
+  document.querySelectorAll('[data-secret]').forEach(box => { lockedHtml[box.dataset.secret] = box.innerHTML; });
+  function fillSecret(s, part, revealed) {
+    const ticket = (t, label) => `<div class="secret-val"><img src="${t.qr}" alt="QR code ${label}"><span>Billet n°</span><b>${t.billet}</b></div>`;
+    const box = document.querySelector(`[data-secret="${part}"]`);
+    if (part === 'resa') box.innerHTML = `<div class="secret-val"><span>Réservation n°</span><b>${s.resa}</b></div>`;
+    else box.innerHTML = ticket(s[part], part);
+    clearTimeout(relockTimers[part]);
+    relockTimers[part] = setTimeout(() => {
+      box.innerHTML = lockedHtml[part];
+      const hidden = revealed && document.getElementById(revealed);
+      if (hidden) hidden.hidden = true;
+    }, RELOCK_MS);
+  }
+  let toPart = null, toReveal = null;
+  function reveal(id) {
+    const el = id && document.getElementById(id);
+    if (!el) return;
+    el.hidden = false;
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+  }
+  // Délégation : les boutons remis en place après le reverrouillage marchent aussi.
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-unlock]');
+    if (!b) return;
+    toPart = b.dataset.part;
+    toReveal = b.dataset.unlock || null;
+    codeModal.hidden = false; codeMsg.textContent = ''; codeInput.value = '';
+    codeInput.focus();
+  });
+  document.getElementById('closeCode').addEventListener('click', () => { codeModal.hidden = true; });
+  codeModal.addEventListener('click', e => { if (e.target === codeModal) codeModal.hidden = true; });
+  document.getElementById('codeForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    codeMsg.textContent = '…';
+    try {
+      fillSecret(await decryptSecrets(codeInput.value.trim()), toPart, toReveal);
+      codeMsg.textContent = 'Accès autorisé';
+      setTimeout(() => { codeModal.hidden = true; reveal(toReveal); }, 700);
+    } catch (_) {
+      codeMsg.textContent = 'Mot de passe incorrect';
+      codeInput.value = '';
+    }
+  });
+
+  // ---------- Billet retour : 8 épreuves Final Fantasy (FF7 puis FF10), à partir du dimanche 17h ----------
+  // Chaque question a son propre message de réussite et 3 messages d'erreur, tous différents.
+  const ffRounds = [
+    { q: 'FF7 · Dans quel village Cloud et Tifa ont-ils grandi ?', choices: ['Kalm', 'Nibelheim', 'Junon', 'Gongaga'], good: 'Nibelheim',
+      win: 'Une sphère s\'allume…', miss: ['Un Pampa te bloque la route…', 'Tifa croise les bras, déçue.', 'Pense au château d\'eau du village…'] },
+    { q: 'FF7 · Comment s\'appelle le parc d\'attractions géant de FF7 ?', choices: ['Gold Saucer', 'Wall Market', 'Costa del Sol', 'Fort Condor'], good: 'Gold Saucer',
+      win: 'Les feux d\'artifice éclatent au-dessus du parc !', miss: ['Le chocobo de la course te dépasse…', 'Cait Sith te prédit… un échec.', 'Indice : il est en or…'] },
+    { q: 'FF7 · Quelle est l\'arme ultime de Cloud ?', choices: ['Ragnarok', 'Masamune', 'Ultima Weapon', 'Excalibur'], good: 'Ultima Weapon',
+      win: 'La lame brille.', miss: ['Ça, c\'est l\'épée d\'un autre…', 'Sephiroth sourit dans l\'ombre…', 'Elle porte le nom de la magie suprême…'] },
+    { q: 'FF7 · Où Aerith perd-elle la vie ?', choices: ['Le Temple des Anciens', 'La Cité des Anciens', 'Le Cratère Nord', 'Nibelheim'], good: 'La Cité des Anciens',
+      win: 'Une fleur pousse dans l\'eau…', miss: ['Une musique triste commence…', 'Le chocobo baisse la tête.', 'Pas le temple… la cité.'] },
+    { q: 'FF10 · Comment s\'appelle l\'équipe de blitzball de Tidus à Zanarkand ?', choices: ['Besaid Aurochs', 'Luca Goers', 'Zanarkand Abes', 'Al Bhed Psyches'], good: 'Zanarkand Abes',
+      win: 'Les Abes saluent leur star !', miss: ['Ça, c\'est l\'équipe de Wakka !', 'Le ballon file dans la mauvaise sphère…', 'Pense à la ville natale de Tidus…'] },
+    { q: 'FF10 · Qui était, avec Jecht, le gardien de Braska… et protège aussi Yuna ?', choices: ['Kimahri', 'Auron', 'Wakka', 'Seymour'], good: 'Auron',
+      win: 'Auron remonte ses lunettes. « Bien. »', miss: ['Seymour te sourit… méfie-toi.', 'Rikku pouffe de rire.', 'Indice : il a une grande cape rouge…'] },
+    { q: 'FF10 · Quelle est l\'arme céleste de Tidus ?', choices: ['Caladbolg', 'Nirvana', 'World Champion', 'Masamune'], good: 'Caladbolg',
+      win: 'Le Sphérier s\'illumine !', miss: ['Ça, c\'est l\'arme de Yuna…', 'Un cactuar s\'enfuit en courant…', 'Elle commence par un C…'] },
+    { q: 'FF10 · Quelle est la première chimère que Yuna obtient, à Besaid ?', choices: ['Ifrit', 'Valefor', 'Ixion', 'Shiva'], good: 'Valefor',
+      win: 'Valefor déploie ses ailes !', miss: ['Même Kimahri secoue la tête…', 'Une plume rose tombe du ciel…', 'Elle vole, et c\'est la toute première…'] }
+  ];
+  let rRound = 0, rMiss = 0, rLocked = false, retourQuizShown = false;
+  q$('spheres').innerHTML = ffRounds.map((_, i) => `<span class="slot sphere" id="r${i}">${i + 1}</span>`).join('');
+
+  // Dimanche : le chocobo propose de récupérer le billet retour tout de suite (sinon il s'ouvre seul à 17h).
+  function showChocobo() {
+    q$('chocoIntro').hidden = false;
+  }
+  function showRetourQuiz() {
+    retourQuizShown = true;
+    q$('retourWait').hidden = true;
+    q$('chocoIntro').hidden = true;
+    q$('retourBody').classList.add('with-choco');
+    q$('retourQuiz').hidden = false;
+    showFfRound();
+  }
+  q$('chocoBtn').addEventListener('click', showRetourQuiz);
+  function giveRetour(withParty) {
+    retourDone = true;
+    if (!testMode) try { localStorage.setItem('deniz33-retour', '1'); } catch (_) {}
+    q$('retourLocked').hidden = true;
+    q$('retourCard').hidden = false;
+    if (withParty) {
+      q$('retourCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      pyreBurst();
+      confetti(innerWidth / 2, innerHeight / 3, 160);
+    }
+  }
+  function showFfRound() {
+    const r = ffRounds[rRound];
+    rMiss = 0; rLocked = false;
+    q$('rStep').textContent = `Épreuve ${rRound + 1} / ${ffRounds.length}`;
+    q$('rText').textContent = r.q;
+    q$('rMsg').textContent = '';
+    q$('rChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
+    q$('rChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => ffAnswer(b)));
+  }
+  function ffAnswer(b) {
+    if (rLocked) return;
+    const r = ffRounds[rRound];
+    if (b.textContent !== r.good) {
+      b.classList.add('bad');
+      q$('rMsg').textContent = r.miss[Math.min(rMiss, r.miss.length - 1)];
+      // Jamais bloquant : après 2 erreurs, la bonne réponse clignote.
+      if (++rMiss >= 2) [...q$('rChoices').children].find(x => x.textContent === r.good).classList.add('blink');
+      return;
+    }
+    rLocked = true;
+    b.classList.add('good'); b.classList.remove('blink');
+    q$('rMsg').textContent = r.win;
+    q$('r' + rRound).classList.add('on');
+    const box = b.getBoundingClientRect();
+    confetti(box.left + box.width / 2, box.top, 50);
+    setTimeout(() => {
+      if (++rRound < ffRounds.length) return showFfRound();
+      // Les 8 sphères sont allumées : le billet retour apparaît, sans attendre 17h.
+      q$('retourQuiz').innerHTML = '<p class="title" style="font-size:16px;color:var(--gold);margin:0">Billet obtenu</p><p class="rq-intro" style="margin-top:8px">Spira te laisse rentrer… mais garde les lucioles avec toi.</p>';
+      setTimeout(() => giveRetour(true), 6600);
+    }, 1400);
+  }
+
+  // ---------- Sauvegarde ----------
+  document.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', e => {
+    document.getElementById('saved').style.display = 'block';
+    confetti(e.clientX, e.clientY, 150);
+  }));
+
+  // ---------- Apparition au scroll ----------
+  const io = new IntersectionObserver(es => es.forEach(en => {
+    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+  }), { threshold: .15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---------- Prochain chapitre (en haut de la page) ----------
+  function nextChapText() {
+    if (souvenir) return '';
+    const t = parisNow();
+    if (t < UNLOCK.lettre) return 'Chapitre 3 dans ' + untilText(UNLOCK.lettre);
+    if (PS5 && t >= UNLOCK.dimanche && t < UNLOCK.boss) return 'Chapitre 4 dans ' + untilText(UNLOCK.boss);
+    return '';
+  }
+
+  // ---------- Démarrage ----------
+  // Liens de test : ?chapitre=1 / 2 / 3 / dimanche / 4  ·  ?skip = page directe
+  const params = new URLSearchParams(location.search);
+  // ?chapitre=souvenir = le mode souvenir · ?chapitre=verrou = le dimanche verrouillé avec le maillot
+  const testMap = { '1': 'mission', '2': 'gare', '3': 'lettre', 'dimanche': 'dimanche', 'retour': 'dimanche', '4': 'boss', 'souvenir': 'souvenir', 'verrou': 'verrou' };
+  const testMode = params.has('chapitre');
+  const chapter = testMap[params.get('chapitre')] || currentChapter();
+  const souvenir = chapter === 'souvenir';
+  let alreadyFound = false;
+  try { alreadyFound = localStorage.getItem('deniz33-trouve') === '1'; } catch (_) {}
+
+  // Mode souvenir : nouvel en-tête et section pour tout revivre
+  if (souvenir) {
+    document.getElementById('heroBadge').textContent = 'SOUVENIRS · AMSTERDAM 2026';
+    document.getElementById('heroSub').textContent = 'La quête est terminée… mais elle se revit à l\'infini.';
+    document.getElementById('souvenirs').hidden = false;
+    document.getElementById('resaCard').hidden = false;
+  }
+  // Chapitre rejoué depuis les souvenirs : lien pour y revenir
+  if (params.has('souvenir')) document.getElementById('backSouvenir').hidden = false;
+
+  // L'onglet Dimanche reste verrouillé jusqu'au dimanche 4h00.
+  const sundayOpen = chapter === 'dimanche' || chapter === 'boss' || souvenir;
+  if (sundayOpen) selectDay('sun');
+  else document.querySelector('.tab[data-day="sun"]').classList.add('is-locked');
+  if (souvenir) selectDay('sat');
+  if (chapter === 'verrou') {
+    // En rejouant le verrou, on cache le compte à rebours (il n'a plus de sens après le week-end)
+    document.querySelectorAll('.sun-locked > p').forEach(p => { p.hidden = true; });
+    selectDay('sun');
+    setTimeout(() => document.getElementById('sunLocked').scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
+  }
+  // Billet retour : visible seulement une fois les 6 épreuves FF réussies (à partir du dimanche 17h).
+  // ?chapitre=retour permet de tester les épreuves tout de suite.
+  const retourTest = params.get('chapitre') === 'retour';
+  let retourDone = false;
+  try { retourDone = !testMode && localStorage.getItem('deniz33-retour') === '1'; } catch (_) {}
+  // Samedi : compte à rebours seul. Dimanche : le chocobo propose le raccourci. À 17h : le billet s'ouvre tout seul.
+  const retourTime = () => !retourTest && parisNow() >= UNLOCK.retour;
+  document.getElementById('retourCard').hidden = !retourDone;
+  document.getElementById('retourLocked').hidden = retourDone;
+  if (!retourDone && (retourTime() || souvenir)) giveRetour(false);
+  else if (!retourDone && (sundayOpen || retourTest)) showChocobo();
+
+  if (params.has('skip') || chapter === 'dimanche' || souvenir || chapter === 'verrou' || (chapter === 'gare' && alreadyFound && !testMode)) {
+    overlay.style.display = 'none';
+    document.body.classList.remove('locked');
+  } else if (chapter === 'mission') show('sMission');
+  else if (chapter === 'gare') show('sGuess');
+  else if (chapter === 'lettre') show('sLetter');
+  else if (chapter === 'boss') show('sBoss');
+
+  function refreshTimers() {
+    document.getElementById('lockMission').textContent = untilText(UNLOCK.gare);
+    document.getElementById('nextChap').textContent = nextChapText();
+    document.getElementById('lockSun').textContent = untilText(UNLOCK.dimanche);
+    document.getElementById('lockRetour').textContent = untilText(UNLOCK.retour);
+    if (!retourDone && retourTime()) giveRetour(true);
+  }
+  refreshTimers(); setInterval(refreshTimers, 1000);
+</script>
+</body>
+</html>
