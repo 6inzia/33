@@ -282,9 +282,9 @@
   .tab[aria-selected="true"] { color: #fff; border-color: var(--edge); background: linear-gradient(180deg, var(--glass-top), var(--glass-bot)); box-shadow: 0 0 14px rgba(110, 175, 255, .3); }
   .tab.is-locked { opacity: .5; }
   .sun-locked { text-align: center; padding: 34px 12px; border: 1px dashed rgba(160, 210, 255, .35); border-radius: 10px; font-family: Cinzel, serif; letter-spacing: 2px; color: var(--muted); }
-  /* Après le clic, le bloc du cadenas se resserre sous le cadenas : aucun vide au-dessus du message final. */
-  .sun-locked.force-started { padding-bottom: 18px; }
-  .sun-locked #jLie { margin: 12px 0 0; padding: 0; }
+  /* Après le clic, garder un petit espace entre le cadenas, le message final et le cadre pointillé. */
+  .sun-locked.force-started { padding-bottom: 28px; }
+  .sun-locked #jLie { margin: 20px 0 0; padding: 4px 0 0; }
   .sun-locked #jLie[hidden] { display: none !important; }
   .sun-locked p { margin: 0 0 8px; }
   .sun-locked b { display: block; color: var(--gold); font-size: 16px; }
