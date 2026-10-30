@@ -348,6 +348,8 @@
   #jLie.dissolve { animation: pyreDissolve 1.4s ease-in forwards; }
   .jersey.depart { animation: jerseyPyre 1.25s ease-in forwards; pointer-events: none; }
   .jersey-label.depart { animation: pyreDissolve 1.1s ease-in forwards; }
+  .force-title.depart { animation: pyreDissolve 1.25s ease-in forwards; }
+  .win.quiz.depart { animation: pyreDissolve 1.25s ease-in forwards; pointer-events: none; }
   @keyframes jerseyPyre { 0% { opacity: 1; transform: translateY(0) scale(1) rotate(0); filter: drop-shadow(0 0 24px rgba(140, 210, 255, .35)); } 35% { opacity: .9; transform: translateY(-18px) scale(1.04) rotate(-5deg); } 100% { opacity: 0; transform: translateY(-105px) scale(.55) rotate(12deg); filter: blur(8px); } }
   @keyframes pyreDissolve { to { opacity: 0; transform: translateY(-24px) scale(.96); filter: blur(7px); } }
   .lie b { font-family: Cinzel, serif; letter-spacing: 2px; color: var(--gold); display: block; margin-bottom: 6px; }
@@ -1270,7 +1272,11 @@
     quiz.hidden = false;
     if (lie) { lie.hidden = true; lie.classList.remove('dissolve'); }
     button.hidden = true;
-    if (title) title.hidden = true;
+    if (title) {
+      title.classList.add('depart');
+      pyreBurst();
+      setTimeout(() => { title.hidden = true; title.classList.remove('depart'); }, 1400);
+    }
     showFootRound();
     requestAnimationFrame(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   });
@@ -1318,12 +1324,14 @@
         const quiz = q$('jerseyWrap').querySelector('.win.quiz');
         jersey.classList.add('depart');
         label.classList.add('depart');
-        quiz.hidden = true;
+        quiz.classList.add('depart');
         pyreBurst();
-        // Le message prend la place du maillot une fois son animation terminée.
+        // Maillot, légende et quiz s'envolent ensemble avant l'apparition du message.
         setTimeout(() => {
           jersey.hidden = true;
           label.hidden = true;
+          quiz.hidden = true;
+          quiz.classList.remove('depart');
           const lie = q$('jLie');
           lie.innerHTML = '<b>Verrou forcé… ?</b>Bravo, mais j\'ai menti : même un Gardien de Spira doit attendre l\'aube.<br>Dimanche reste verrouillé. Va dormir !';
           lie.hidden = false;
