@@ -284,6 +284,8 @@
   .sun-locked { text-align: center; padding: 34px 12px; border: 1px dashed rgba(160, 210, 255, .35); border-radius: 10px; font-family: Cinzel, serif; letter-spacing: 2px; color: var(--muted); }
   /* Après le clic, le bloc du cadenas se resserre sous le cadenas : aucun vide au-dessus du message final. */
   .sun-locked.force-started { padding-bottom: 0; }
+  .sun-locked #jLie { margin: 12px 0 0; padding: 0; }
+  .sun-locked #jLie[hidden] { display: none !important; }
   .sun-locked p { margin: 0 0 8px; }
   .sun-locked b { display: block; color: var(--gold); font-size: 16px; }
   .day-sub { font-size: 14px; color: var(--muted); margin: 0 0 6px; text-align: center; }
@@ -1353,7 +1355,12 @@
           quiz.classList.remove('depart');
           const lie = q$('jLie');
           lie.innerHTML = '<b>Verrou forcé… ?</b>Bravo, mais j\'ai menti : même un Gardien de Spira doit attendre l\'aube.<br>Dimanche reste verrouillé. Va dormir !';
-          q$('jerseyWrap').classList.add('lie-only');
+          // Le message final est déplacé dans le panneau du cadenas, juste sous celui-ci.
+          // On masque ensuite tout le wrapper du maillot/quiz : il ne réserve donc plus aucun espace.
+          const lockPanel = document.querySelector('#sunLocked .sun-locked');
+          if (lockPanel) lockPanel.appendChild(lie);
+          q$('jerseyWrap').hidden = true;
+          q$('jerseyWrap').classList.remove('lie-only');
           lie.hidden = false;
           lie.classList.remove('dissolve');
           lie.scrollIntoView({ behavior: 'smooth', block: 'center' });
