@@ -353,6 +353,10 @@
   .slot { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(160, 210, 255, .4); display: grid; place-items: center;
     font-family: Cinzel, serif; font-weight: 700; font-size: 13px; color: var(--muted); }
   .slot.on { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 12px rgba(255, 215, 106, .6); }
+  /* Les sphères numérotées des quiz restent dans leur ligne : ne pas hériter
+     du positionnement absolu de la grande sphère décorative. */
+  .slots .sphere { position: relative; inset: auto; left: auto; top: auto; width: 30px; height: 30px;
+    margin: 0; border-radius: 50%; transform: none; animation: none; }
   .quiz { margin-top: 20px; text-align: center; }
   .quiz .step { font-family: Cinzel, serif; letter-spacing: 2px; font-size: 12px; color: var(--cyan); margin: 0 0 6px; }
   .quiz .q { margin: 0 0 14px; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 1px; font-size: 16px; line-height: 1.45; }
@@ -706,6 +710,8 @@
           <div class="links"><a data-maps="Hortus Botanicus, Amsterdam">Hortus</a></div></div></li>
         <li><span class="time">11:45</span><div><h3>Chasse aux affiches pour VV, round 2</h3><p>La boutique du Rijksmuseum (Vermeer, Rembrandt, Museumstraat 1) et celle du Van Gogh Museum (Museumplein 6).</p>
           <div class="links"><a data-maps="Rijksmuseum Shop, Museumstraat 1, Amsterdam">Rijksmuseum Shop</a><a data-maps="Van Gogh Museum, Museumplein 6, Amsterdam">Van Gogh Shop</a></div></div></li>
+        <li><span class="time">12:30</span><div><h3>Spot photo · Lomanstraat</h3><p>La rue aux arbres qui forment une arche au-dessus des maisons : un décor parfait pour une photo.</p>
+          <div class="links"><a class="photo" data-maps="Lomanstraat, Amsterdam, Netherlands">Spot photo · Lomanstraat</a></div></div></li>
         <li><span class="time">13:00</span><div><h3>Le Jordaan</h3><p>En tram puis à pied le long du Prinsengracht et de l'Egelantiersgracht : rues pavées, ponts fleuris et maisons penchées.</p>
           <div class="links"><a data-maps="Jordaan, Amsterdam">Jordaan</a><a data-maps="Westerkerk, Prinsengracht 279, Amsterdam">Prinsengracht</a><a data-maps="Egelantiersgracht, Amsterdam">Egelantiersgracht</a><a class="photo" data-maps="Brouwersgracht, Amsterdam">Spot photo · Brouwersgracht</a></div></div></li>
         <li><span class="time">15:30</span><div><h3>Déjeuner sur Haarlemmerdijk</h3><p>Au choix : la tarte aux pommes mythique de Winkel 43, les crêpes géantes de The Pancake Bakery ou les croques XXL de Monty's Toasties. Puis souvenirs et pauses gourmandes : stroopwafels fraîches, bulbes de tulipes d'hiver, mini gouda aromatisé.</p>
@@ -976,6 +982,27 @@
   let bossStarted = false;
   const q$ = id => document.getElementById(id);
 
+  // Mélange les propositions et évite que la bonne réponse garde la même position
+  // d'une question à la suivante dans un même quiz.
+  const lastGoodPosition = Object.create(null);
+  function renderQuizChoices(containerId, round, onAnswer) {
+    const container = q$(containerId);
+    const choices = [...round.choices];
+    const goodIndex = choices.indexOf(round.good);
+    const previous = lastGoodPosition[containerId];
+    const positions = choices.map((_, i) => i).filter(i => i !== previous);
+    const nextGoodPosition = positions[Math.floor(Math.random() * positions.length)];
+    lastGoodPosition[containerId] = nextGoodPosition;
+    const good = choices.splice(goodIndex, 1)[0];
+    for (let i = choices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [choices[i], choices[j]] = [choices[j], choices[i]];
+    }
+    choices.splice(nextGoodPosition, 0, good);
+    container.innerHTML = choices.map(c => `<button type="button">${c}</button>`).join('');
+    container.querySelectorAll('button').forEach(b => b.addEventListener('click', () => onAnswer(b)));
+  }
+
   // Ectoplasma, abandonné il y a longtemps : 8 énigmes pour gagner sa confiance (un badge par réponse).
   // Chaque question a son propre message de réussite et 3 messages d'erreur, tous différents.
   const ghost = document.getElementById('ghost');
@@ -1024,8 +1051,7 @@
     q$('bStep').textContent = bRound < BADGES ? `Badge ${bRound + 1} / ${BADGES}` : `Bonus ${bRound - BADGES + 1} / ${bossRounds.length - BADGES}`;
     q$('bText').textContent = r.q;
     q$('bMsg').textContent = '';
-    q$('bChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
-    q$('bChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => bossAnswer(b)));
+    renderQuizChoices('bChoices', r, bossAnswer);
   }
   function bossAnswer(b) {
     if (bLocked) return;
@@ -1144,8 +1170,7 @@
     q$('ronStep').textContent = `Épreuve ${ronRound + 1} / ${ronRounds.length}`;
     q$('ronText').textContent = r.q;
     q$('ronMsg').textContent = '';
-    q$('ronChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
-    q$('ronChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => ronAnswer(b)));
+    renderQuizChoices('ronChoices', r, ronAnswer);
   }
   function ronAnswer(b) {
     if (ronLocked) return;
@@ -1169,7 +1194,7 @@
       q$('ronAwake').hidden = false;
       confetti(innerWidth / 2, innerHeight / 3, 160);
       if (!testMode) try { localStorage.setItem('deniz33-ronflex', '1'); } catch (_) {}
-      setTimeout(() => openSaturday(true), 4200);
+      setTimeout(() => openSaturday(true), 12600);
     }, 1400);
   }
   function openSaturday(party) {
@@ -1244,8 +1269,7 @@
     q$('qStep').textContent = `Épreuve ${fRound + 1} / ${footRounds.length}`;
     q$('qText').textContent = r.q;
     q$('qMsg').textContent = '';
-    q$('qChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
-    q$('qChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => footAnswer(b)));
+    renderQuizChoices('qChoices', r, footAnswer);
   }
   function footAnswer(b) {
     if (fLocked) return;
@@ -1265,10 +1289,16 @@
         q$('qStep').textContent = 'Collection complète';
         // … et la petite blague : le verrou ne cède pas.
         setTimeout(() => {
+          // Le quiz et le maillot disparaissent : seul le message prend leur place.
+          q$('jersey').hidden = true;
+          q$('jLabel').hidden = true;
+          q$('jerseyWrap').querySelector('.win.quiz').hidden = true;
           const lie = q$('jLie');
           lie.innerHTML = '<b>Verrou forcé… ?</b>Bravo, mais j\'ai menti : même un Gardien de Spira doit attendre l\'aube.<br>Dimanche reste verrouillé. Va dormir !';
           lie.hidden = false;
           lie.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Après 30 secondes, le message s'efface : il ne reste que le cadenas.
+          setTimeout(() => { lie.hidden = true; }, 30000);
         }, 1800);
       }
     } else {
@@ -1278,13 +1308,7 @@
       if (++fMiss >= 2) [...q$('qChoices').children].find(x => x.textContent === r.good).classList.add('blink');
     }
   }
-  // Une fois les 3 maillots gagnés, toucher le maillot les fait défiler.
-  q$('jersey').addEventListener('click', () => {
-    if (wonKits.length < footRounds.length) return;
-    shownKit = (shownKit + 1) % wonKits.length;
-    wear(wonKits[shownKit], ' — touche pour changer');
-  });
-  showFootRound();
+  // Le maillot n'est plus interactif : il disparaît à la fin du quiz.\n  showFootRound();
 
   // ---------- Boutons Google Maps ----------
   document.querySelectorAll('a[data-maps]').forEach(a => {
@@ -1417,8 +1441,7 @@
     q$('rStep').textContent = `Épreuve ${rRound + 1} / ${ffRounds.length}`;
     q$('rText').textContent = r.q;
     q$('rMsg').textContent = '';
-    q$('rChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
-    q$('rChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => ffAnswer(b)));
+    renderQuizChoices('rChoices', r, ffAnswer);
   }
   function ffAnswer(b) {
     if (rLocked) return;
@@ -1504,8 +1527,7 @@
     // Les phrases à compléter finissent par un blanc
     q$('sText').innerHTML = r.full ? r.q : r.q + '<span class="blank"></span> »';
     q$('sMsg').textContent = '';
-    q$('sChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
-    q$('sChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => sphereAnswer(b)));
+    renderQuizChoices('sChoices', r, sphereAnswer);
   }
   function sphereAnswer(b) {
     if (sLocked) return;
