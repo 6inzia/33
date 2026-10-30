@@ -301,6 +301,9 @@
 
   /* Maillot */
   .jersey-wrap { text-align: center; margin-top: 22px; }
+  /* Quand seul le message final reste, supprimer l'espace réservé au maillot. */
+  .jersey-wrap.lie-only { margin-top: 0; }
+  .jersey-wrap.lie-only #jLie { margin-top: 0; }
   #jerseyWrap[hidden] { display: none !important; }
   #jerseyWrap:not([hidden]) { display: block !important; }
   /* Verrou : cadenas qui tremble au centre de 8 cristaux qui tournent */
@@ -1346,6 +1349,7 @@
           quiz.classList.remove('depart');
           const lie = q$('jLie');
           lie.innerHTML = '<b>Verrou forcé… ?</b>Bravo, mais j\'ai menti : même un Gardien de Spira doit attendre l\'aube.<br>Dimanche reste verrouillé. Va dormir !';
+          q$('jerseyWrap').classList.add('lie-only');
           lie.hidden = false;
           lie.classList.remove('dissolve');
           lie.scrollIntoView({ behavior: 'smooth', block: 'center' });
