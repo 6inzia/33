@@ -127,8 +127,6 @@
     border: 1px solid rgba(255, 215, 106, .7); background: rgba(10, 20, 60, .85); transition: background .4s, box-shadow .4s; }
   .sph-crystals span.on { background: radial-gradient(circle, #fffbe6, var(--gold) 60%, #c8901e); box-shadow: 0 0 14px 3px rgba(255, 215, 106, .85); }
   .sph-label { font-family: Cinzel, serif; letter-spacing: 2px; font-size: 13px; color: var(--muted); margin: 0; }
-  #sNext { margin-top: 12px; font-size: 13px; padding: 10px 16px; }
-  #sNext[hidden] { display: none; }
   .sph-ring.r2 { inset: 22px; animation-duration: 9s; animation-direction: reverse; border-color: rgba(255, 215, 106, .45); }
   .sph-ring.r2::before { background: #fff3c4; box-shadow: 0 0 12px 4px rgba(255, 215, 106, .8); }
   .sph-orb { position: absolute; inset: 48px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff, #bfeaff 25%, #3f9ee0 60%, #0c2f66);
@@ -310,6 +308,34 @@
     border: 1px solid rgba(255, 215, 106, .8); background: rgba(4, 11, 28, .7); box-shadow: 0 0 8px rgba(255, 215, 106, .4); transition: background .6s, box-shadow .6s; }
   .lock-ring .orbit span.on { background: radial-gradient(circle, #fffbe6, var(--gold) 60%, #c8901e); box-shadow: 0 0 14px 3px rgba(255, 215, 106, .85); }
   .lock-ring .padlock { position: absolute; left: 50%; top: 50%; width: 78px; margin: -42px 0 0 -39px; filter: drop-shadow(0 0 16px rgba(255, 215, 106, .7)); animation: shake 3s ease-in-out infinite; }
+  /* Samedi verrouillé : Ronflex endort la prairie jusqu'à l'arrivée du train (10h50) */
+  .ron-scene { position: relative; width: 100%; max-width: 330px; aspect-ratio: 335 / 597; margin: 18px auto 0; border-radius: 18px; overflow: hidden;
+    border: 1px solid rgba(246, 184, 230, .7); box-shadow: 0 0 0 4px rgba(184, 240, 138, .12), 0 0 40px rgba(199, 166, 255, .45); background: #c9a8e8; }
+  .ron-scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: ronSway 6s ease-in-out infinite; }
+  .ron-scene .veil { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(10, 6, 30, .55)); }
+  .ron-petal { position: absolute; top: 0; width: 9px; height: 6px; border-radius: 60% 0 60% 0; background: #f6b8e6; box-shadow: 0 0 6px rgba(246, 184, 230, .9); animation: ronPetal 9s linear infinite; }
+  .ron-fly { position: absolute; width: 16px; height: 12px; animation: ronFlutter 4s ease-in-out infinite; filter: drop-shadow(0 0 6px #fff); }
+  .ron-fly::before, .ron-fly::after { content: ""; position: absolute; top: 0; width: 8px; height: 12px; background: #fff; border-radius: 80% 20% 70% 30%; }
+  .ron-fly::before { left: 0; } .ron-fly::after { right: 0; transform: scaleX(-1); }
+  .ron-notes { position: absolute; left: 0; right: 0; bottom: 16px; display: flex; justify-content: center; gap: 8px; }
+  .ron-notes span { width: 28px; height: 28px; display: grid; place-items: center; font-size: 17px; border-radius: 50%; color: rgba(255, 255, 255, .55);
+    background: rgba(20, 10, 50, .45); border: 1px solid rgba(246, 184, 230, .45); transition: .4s; }
+  .ron-notes span.on { color: #3a1d4f; background: radial-gradient(circle, #fff, #f6b8e6 70%); box-shadow: 0 0 14px rgba(246, 184, 230, .95); }
+  .ron-title { text-shadow: 0 0 14px rgba(199, 166, 255, .9); }
+  .ron-btn { font-family: Cinzel, serif; font-weight: 700; letter-spacing: 3px; font-size: 14px; color: #3a1d4f; background: linear-gradient(180deg, #fff, #f6b8e6);
+    border: 0; border-radius: 30px; padding: 13px 24px; box-shadow: 0 0 20px rgba(246, 184, 230, .6); animation: ronPulse 2.4s ease-in-out infinite; cursor: pointer; }
+  .ron-btn[hidden] { display: none; }
+  #ronQuiz { border-color: rgba(246, 184, 230, .6); }
+  #ronQuiz .step, #ronMsg { color: #f6b8e6; }
+  #ronMsg { min-height: 24px; margin: 12px 0 0; font-family: Cinzel, serif; letter-spacing: 1px; }
+  #ronQuiz .choices button.good { background: linear-gradient(180deg, #fff, #f6b8e6); color: #3a1d4f; }
+  #ronAwake { margin-top: 20px; animation: up .8s ease-out; }
+  #ronAwake .title { font-size: 20px; margin: 0; color: #f6b8e6; text-shadow: 0 0 14px rgba(246, 184, 230, .8); }
+  #ronAwake p:last-child { margin: 8px 0 0; font-size: 15px; }
+  @keyframes ronSway { 50% { transform: scale(1.015); } }
+  @keyframes ronPulse { 50% { transform: scale(1.05); box-shadow: 0 0 34px rgba(246, 184, 230, .9); } }
+  @keyframes ronPetal { from { transform: translate(0, -20px) rotate(0); opacity: 0; } 10% { opacity: 1; } to { transform: translate(var(--dx), 600px) rotate(540deg); opacity: 0; } }
+  @keyframes ronFlutter { 0%, 100% { transform: translate(0, 0) scaleX(1); } 25% { transform: translate(10px, -14px) scaleX(.3); } 50% { transform: translate(22px, -6px) scaleX(1); } 75% { transform: translate(12px, -20px) scaleX(.3); } }
   .force-title { font-size: 20px; margin: 18px 0 18px; line-height: 1.35; }
   .force-btn { animation: ctaPulse 2.4s ease-in-out infinite; }
   .force-btn[hidden] { display: none; }
@@ -337,8 +363,6 @@
   .choices button.bad { opacity: .35; }
   .choices button.blink { animation: blink .8s steps(2) infinite; border-color: var(--gold); }
   #qMsg { min-height: 24px; margin: 12px 0 0; font-family: Cinzel, serif; letter-spacing: 1px; color: var(--gold); }
-  #qNext { margin-top: 12px; font-size: 13px; padding: 10px 16px; }
-  #qNext[hidden] { display: none; }
 
   /* Sauvegarde */
   .save .win { text-align: center; font-family: Cinzel, serif; font-weight: 700; letter-spacing: 2px; font-size: 17px; }
@@ -388,7 +412,6 @@
       <p class="q" id="sText"></p>
       <div class="choices" id="sChoices"></div>
       <p id="sMsg"></p>
-      <button type="button" class="btn" id="sNext" hidden>Épreuve suivante</button>
     </div>
     <p class="title" id="sphereWin" hidden>C'est bien toi.</p>
   </div>
@@ -486,12 +509,13 @@
     <a class="open-letter" href="mot.html?souvenir"><i></i>RELIRE LA LETTRE<i></i></a>
     <h2 class="sec-title title" style="margin-top:40px">Rejouer un chapitre</h2>
     <div class="replay-list">
-      <a class="win replay" href="index.html?chapitre=1&amp;souvenir"><b>I</b>La mission secrète</a>
-      <a class="win replay" href="index.html?chapitre=2&amp;souvenir"><b>II</b>La devinette de la gare</a>
-      <a class="win replay" href="index.html?chapitre=3&amp;souvenir"><b>III</b>La lettre au resto</a>
-      <a class="win replay" href="index.html?chapitre=verrou&amp;souvenir"><b>IV</b>Le verrou du dimanche</a>
-      <a class="win replay" href="index.html?chapitre=retour&amp;souvenir"><b>V</b>Le chocobo du retour</a>
-      <a class="win replay" href="index.html?chapitre=4&amp;souvenir"><b>VI</b>Ectoplasma</a>
+      <a class="win replay" href="index.html?chapitre=1&amp;souvenir"><b>I</b>Sphère de Jecht</a>
+      <a class="win replay" href="index.html?chapitre=2&amp;souvenir"><b>II</b>Gare</a>
+      <a class="win replay" href="index.html?chapitre=ronflex&amp;souvenir"><b>III</b>Ronflex</a>
+      <a class="win replay" href="index.html?chapitre=3&amp;souvenir"><b>IV</b>Lettre</a>
+      <a class="win replay" href="index.html?chapitre=verrou&amp;souvenir"><b>V</b>Verrou</a>
+      <a class="win replay" href="index.html?chapitre=retour&amp;souvenir"><b>VI</b>Chocobo</a>
+      <a class="win replay" href="index.html?chapitre=4&amp;souvenir"><b>VII</b>Ectoplasma</a>
     </div>
   </section>
 
@@ -561,6 +585,33 @@
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" aria-selected="true" data-day="sat">SAMEDI 19</button>
       <button class="tab" role="tab" aria-selected="false" data-day="sun">DIMANCHE 20</button>
+    </div>
+
+    <!-- Samedi verrouillé jusqu'à 10h50 : un Ronflex dort sur le chemin, 8 épreuves Pokémon pour le réveiller avant -->
+    <div id="satLocked" hidden>
+      <div class="sun-locked">
+        <p>Samedi verrouillé</p>
+        <p>Disponible dans<b id="lockSat"></b></p>
+        <div class="ron-scene">
+          <img src="images/ronflex.jpg" alt="Ronflex endort la prairie">
+          <div class="veil"></div>
+          <i class="ron-petal" style="left:12%;--dx:40px"></i><i class="ron-petal" style="left:38%;--dx:-30px;animation-delay:-3s"></i><i class="ron-petal" style="left:66%;--dx:30px;animation-delay:-6s"></i><i class="ron-petal" style="left:85%;--dx:-40px;animation-delay:-1.5s"></i>
+          <i class="ron-fly" style="left:14%;top:40%"></i><i class="ron-fly" style="left:78%;top:30%;animation-delay:-2s"></i>
+          <div class="ron-notes" id="ronNotes"></div>
+        </div>
+        <h3 class="force-title title ron-title" id="ronTitle">Un Ronflex bloque le chemin…</h3>
+        <button type="button" class="ron-btn" id="ronBtn">JOUER DE LA POKÉFLÛTE</button>
+        <div class="win quiz" id="ronQuiz" hidden>
+          <p class="step" id="ronStep"></p>
+          <p class="q" id="ronText"></p>
+          <div class="choices" id="ronChoices"></div>
+          <p id="ronMsg"></p>
+        </div>
+        <div id="ronAwake" hidden>
+          <p class="title">Ronflex se réveille !</p>
+          <p>Il s'étire, bâille… et libère le chemin.<br>Bienvenue à Amsterdam.</p>
+        </div>
+      </div>
     </div>
 
     <div id="sat">
@@ -643,7 +694,6 @@
           <p class="q" id="qText"></p>
           <div class="choices" id="qChoices"></div>
           <p id="qMsg"></p>
-          <button type="button" class="btn" id="qNext" hidden>Épreuve suivante</button>
         </div>
         <div class="win lie story" id="jLie" hidden></div>
       </div>
@@ -702,6 +752,7 @@
   // Horaires des chapitres (heure de Paris = heure d'Amsterdam)
   const UNLOCK = {
     gare:     '2026-12-19 05:00',
+    samedi:   '2026-12-19 10:50',
     lettre:   '2026-12-19 19:30',
     dimanche: '2026-12-20 04:00',
     retour:   '2026-12-20 17:00',
@@ -1042,11 +1093,90 @@
   // ---------- Onglets ----------
   function selectDay(day) {
     document.querySelectorAll('.tab').forEach(o => o.setAttribute('aria-selected', o.dataset.day === day));
-    document.getElementById('sat').hidden = day !== 'sat';
+    document.getElementById('sat').hidden = day !== 'sat' || satLocked;
+    document.getElementById('satLocked').hidden = day !== 'sat' || !satLocked;
     document.getElementById('sun').hidden = day !== 'sun' || !sundayOpen;
     document.getElementById('sunLocked').hidden = day !== 'sun' || sundayOpen;
   }
   document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => selectDay(t.dataset.day)));
+
+  // ---------- Samedi verrouillé · Ronflex : 8 épreuves Pokémon 1re et 2e génération (niveau expert) ----------
+  let satLocked = false, ronStarted = false;
+  const ronRounds = [
+    { q: 'Quel est le numéro de Ronflex dans le Pokédex ?', choices: ['131', '143', '149', '128'], good: '143',
+      hint: ['Il est entre Ptéra et Artikodin.', 'Ça commence par 14.'], last: 'Ronflex ronfle encore plus fort…',
+      win: 'Ronflex remue une oreille…' },
+    { q: 'Combien de Ronflex peut-on capturer dans Rouge et Bleu, sans échange ?', choices: ['1', '2', '3', '4'], good: '2',
+      hint: ['L\'un bloque la Route 12.', 'Un autre dort sur la Route 16, près de Céladopole.'], last: 'Ronflex se retourne… et écrase des fleurs.',
+      win: 'Une note s\'envole au-dessus de lui…' },
+    { q: 'Dans Rouge et Bleu, qui te donne la Pokéflûte ?', choices: ['Prof. Chen', 'M. Fuji', 'Bill', 'Le Gardien du Parc Safari'], good: 'M. Fuji',
+      hint: ['Il vit à Lavanville.', 'Tu le délivres en haut de la Tour Pokémon.'], last: 'Ronflex marmonne quelque chose sur Lavanville…',
+      win: 'Ronflex sourit dans son sommeil.' },
+    { q: 'Dans Or et Argent, comment réveille-t-on le Ronflex qui bloque la Grotte Taupiqueur ?', choices: ['La Pokéflûte de M. Fuji', 'La station Pokéflûte de la radio', 'Un Super Bonbon', 'La Clochette'], good: 'La station Pokéflûte de la radio',
+      hint: ['Dans Or et Argent, on n\'a plus la vraie flûte.', 'Il faut améliorer la radio du Pokématos.'], last: 'Ronflex tend l\'oreille… mais ce n\'est pas la bonne musique.',
+      win: 'La mélodie le fait bâiller…' },
+    { q: 'Pour faire apparaître MissingNo., qui faut-il aller voir juste avant ?', choices: ['Le vieil homme de Jadielle', 'Le capitaine de l\'Océane', 'M. Fuji', 'Le Président du Fan Club'], good: 'Le vieil homme de Jadielle',
+      hint: ['Il t\'apprend à capturer un Pokémon.', 'Il bloque le chemin au nord de sa ville tant qu\'il n\'a pas eu son café.'], last: 'Ronflex rêve de Cramois\'Île… et de bugs.',
+      win: 'Ronflex rigole en dormant…' },
+    { q: 'Dans Rouge et Bleu, quel type est immunisé contre le Spectre… à cause d\'un bug ?', choices: ['Psy', 'Normal', 'Poison', 'Combat'], good: 'Psy',
+      hint: ['Ce n\'est pas une vraie immunité, c\'est une erreur de programmation.', 'C\'est le type de Mewtwo.'], last: 'Ronflex frissonne… les fantômes l\'ont touché.',
+      win: 'Ronflex respire plus fort…' },
+    { q: 'Quelle est la seule attaque de type Dragon en 1re génération ?', choices: ['Draco-Rage', 'Ouragan', 'Colère', 'Dracogriffe'], good: 'Draco-Rage',
+      hint: ['Elle inflige toujours 40 PV de dégâts.', 'Ouragan et Colère n\'arrivent qu\'en 2e génération.'], last: 'Ronflex se protège avec sa grosse patte…',
+      win: 'Ronflex ouvre un œil !' },
+    { q: 'Dans Or et Argent, quel est le niveau du Pikachu de Red, au Mont Argenté ?', choices: ['70', '77', '81', '88'], good: '81',
+      hint: ['C\'est le plus haut niveau de son équipe.', 'Plus haut que ses trois starters, qui sont niveau 77.'], last: 'Ronflex s\'étire… presque réveillé !',
+      win: 'La dernière note résonne…' }
+  ];
+  ronRounds.forEach(r => { r.miss = [r.hint[0], r.hint[1], r.last]; });
+  let ronRound = 0, ronMiss = 0, ronLocked = false;
+  q$('ronNotes').innerHTML = ronRounds.map((_, i) => `<span id="rn${i}">${i % 2 ? '♫' : '♪'}</span>`).join('');
+  q$('ronBtn').addEventListener('click', () => {
+    ronStarted = true;
+    q$('ronBtn').hidden = true; q$('ronTitle').hidden = true;
+    q$('ronQuiz').hidden = false;
+    showRonRound();
+    q$('ronQuiz').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  function showRonRound() {
+    const r = ronRounds[ronRound];
+    ronMiss = 0; ronLocked = false;
+    q$('ronStep').textContent = `Épreuve ${ronRound + 1} / ${ronRounds.length}`;
+    q$('ronText').textContent = r.q;
+    q$('ronMsg').textContent = '';
+    q$('ronChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
+    q$('ronChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => ronAnswer(b)));
+  }
+  function ronAnswer(b) {
+    if (ronLocked) return;
+    const r = ronRounds[ronRound];
+    if (b.textContent !== r.good) {
+      b.classList.add('bad');
+      q$('ronMsg').textContent = r.miss[Math.min(ronMiss, r.miss.length - 1)];
+      if (++ronMiss >= 2) [...q$('ronChoices').children].find(x => x.textContent === r.good).classList.add('blink');
+      return;
+    }
+    ronLocked = true;
+    b.classList.add('good'); b.classList.remove('blink');
+    q$('ronMsg').textContent = r.win;
+    q$('rn' + ronRound).classList.add('on');
+    const box = b.getBoundingClientRect();
+    confetti(box.left + box.width / 2, box.top, 50);
+    setTimeout(() => {
+      if (++ronRound < ronRounds.length) return showRonRound();
+      // Les 8 notes sont jouées : Ronflex se réveille, puis le samedi s'ouvre
+      q$('ronQuiz').hidden = true;
+      q$('ronAwake').hidden = false;
+      confetti(innerWidth / 2, innerHeight / 3, 160);
+      if (!testMode) try { localStorage.setItem('deniz33-ronflex', '1'); } catch (_) {}
+      setTimeout(() => openSaturday(true), 4200);
+    }, 1400);
+  }
+  function openSaturday(party) {
+    satLocked = false;
+    selectDay('sat');
+    if (party) confetti(innerWidth / 2, innerHeight / 3, 120);
+  }
 
   // ---------- Maillot mystère (dans le dimanche verrouillé) : 6 épreuves, 6 maillots ----------
   const kits = {
@@ -1114,7 +1244,6 @@
     q$('qStep').textContent = `Épreuve ${fRound + 1} / ${footRounds.length}`;
     q$('qText').textContent = r.q;
     q$('qMsg').textContent = '';
-    q$('qNext').hidden = true;
     q$('qChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
     q$('qChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => footAnswer(b)));
   }
@@ -1131,7 +1260,7 @@
       wear(r.kit, last ? ' — touche pour changer' : '');
       const box = b.getBoundingClientRect();
       confetti(box.left + box.width / 2, box.top, last ? 160 : 60);
-      if (!last) q$('qNext').hidden = false;
+      if (!last) setTimeout(() => { fRound++; showFootRound(); }, 1400);
       else {
         q$('qStep').textContent = 'Collection complète';
         // … et la petite blague : le verrou ne cède pas.
@@ -1149,7 +1278,6 @@
       if (++fMiss >= 2) [...q$('qChoices').children].find(x => x.textContent === r.good).classList.add('blink');
     }
   }
-  q$('qNext').addEventListener('click', () => { fRound++; showFootRound(); });
   // Une fois les 3 maillots gagnés, toucher le maillot les fait défiler.
   q$('jersey').addEventListener('click', () => {
     if (wonKits.length < footRounds.length) return;
@@ -1362,7 +1490,6 @@
   let sRound = 0, sMiss = 0, sLocked = false;
   q$('sCrystals').innerHTML = sphereRounds.map((_, i) => `<span id="sp${i}" style="--i:${i}"></span>`).join('');
   q$('sphere').addEventListener('click', () => { if (!sphereStarted) sphereStart(); });
-  q$('sNext').addEventListener('click', () => { sRound++; showSphereRound(); });
 
   function sphereStart() {
     sphereStarted = true;
@@ -1377,7 +1504,6 @@
     // Les phrases à compléter finissent par un blanc
     q$('sText').innerHTML = r.full ? r.q : r.q + '<span class="blank"></span> »';
     q$('sMsg').textContent = '';
-    q$('sNext').hidden = true;
     q$('sChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
     q$('sChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => sphereAnswer(b)));
   }
@@ -1398,7 +1524,7 @@
     q$('sphOrb').style.filter = `brightness(${1 + (sRound + 1) * 0.06})`;
     const box = b.getBoundingClientRect();
     confetti(box.left + box.width / 2, box.top, 50);
-    if (sRound < sphereRounds.length - 1) q$('sNext').hidden = false;
+    if (sRound < sphereRounds.length - 1) setTimeout(() => { sRound++; showSphereRound(); }, 1400);
     else { q$('sStep').textContent = 'Sphère activée'; setTimeout(sphereOutro, 1800); }
   }
   function sphereOutro() {
@@ -1426,8 +1552,9 @@
   // Liens de test : ?chapitre=1 / 2 / 3 / dimanche / 4  ·  ?skip = page directe
   const params = new URLSearchParams(location.search);
   // ?chapitre=souvenir = le mode souvenir · ?chapitre=verrou = le dimanche verrouillé avec le maillot
+  // ?chapitre=ronflex = le samedi verrouillé avec Ronflex
   // ?chapitre=weekend = tout le week-end débloqué, sans le sommaire (retour depuis la lettre en mode souvenir)
-  const testMap = { '1': 'mission', '2': 'gare', '3': 'lettre', 'dimanche': 'dimanche', 'retour': 'dimanche', '4': 'boss', 'souvenir': 'souvenir', 'weekend': 'souvenir', 'verrou': 'verrou' };
+  const testMap = { '1': 'mission', '2': 'gare', '3': 'lettre', 'dimanche': 'dimanche', 'retour': 'dimanche', '4': 'boss', 'souvenir': 'souvenir', 'weekend': 'souvenir', 'verrou': 'verrou', 'ronflex': 'ronflex' };
   const testMode = params.has('chapitre');
   const chapter = testMap[params.get('chapitre')] || currentChapter();
   const souvenir = chapter === 'souvenir';
@@ -1447,6 +1574,13 @@
     document.getElementById('openLetterBtn').href = 'mot.html?souvenir';
   }
 
+  // Le samedi reste verrouillé jusqu'à l'arrivée du train (10h50), sauf si Ronflex est déjà réveillé.
+  const ronTest = chapter === 'ronflex';
+  let ronDone = false;
+  try { ronDone = !testMode && localStorage.getItem('deniz33-ronflex') === '1'; } catch (_) {}
+  satLocked = ronTest || (chapter === 'gare' && !ronDone && parisNow() < UNLOCK.samedi);
+  if (ronTest) document.querySelectorAll('#satLocked .sun-locked > p').forEach(p => { p.hidden = true; });
+
   // L'onglet Dimanche reste verrouillé jusqu'au dimanche 4h00.
   const sundayOpen = chapter === 'dimanche' || chapter === 'boss' || souvenir;
   if (sundayOpen) selectDay('sun');
@@ -1458,6 +1592,8 @@
     selectDay('sun');
     setTimeout(() => document.getElementById('sunLocked').scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
   }
+  // Applique le verrou du samedi sur l'onglet affiché
+  selectDay(document.querySelector('.tab[aria-selected="true"]').dataset.day);
   // Billet retour : visible seulement une fois les 6 épreuves FF réussies (à partir du dimanche 17h).
   // ?chapitre=retour permet de tester les épreuves tout de suite.
   const retourTest = params.get('chapitre') === 'retour';
@@ -1470,7 +1606,7 @@
   if (!retourDone && (retourTime() || souvenir)) giveRetour(false);
   else if (!retourDone && (sundayOpen || retourTest)) showChocobo();
 
-  if (params.has('skip') || chapter === 'dimanche' || souvenir || chapter === 'verrou' || (chapter === 'gare' && alreadyFound && !testMode)) {
+  if (params.has('skip') || chapter === 'dimanche' || souvenir || chapter === 'verrou' || ronTest || (chapter === 'gare' && alreadyFound && !testMode)) {
     overlay.style.display = 'none';
     document.body.classList.remove('locked');
   } else if (chapter === 'mission') {
@@ -1488,6 +1624,9 @@
     document.getElementById('nextChap').textContent = nextChapText();
     document.getElementById('lockSun').textContent = untilText(UNLOCK.dimanche);
     document.getElementById('lockRetour').textContent = untilText(UNLOCK.retour);
+    document.getElementById('lockSat').textContent = untilText(UNLOCK.samedi);
+    // À 10h50, le samedi s'ouvre tout seul (même s'il est en plein milieu des épreuves)
+    if (satLocked && !ronTest && parisNow() >= UNLOCK.samedi) openSaturday(ronStarted);
     if (!retourDone && retourTime()) giveRetour(true);
   }
   refreshTimers(); setInterval(refreshTimers, 1000);
