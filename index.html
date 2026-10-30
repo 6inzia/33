@@ -104,8 +104,6 @@
   .skip { position: fixed; top: 14px; right: 14px; z-index: 21; font-family: Cinzel, serif; letter-spacing: 2px; font-size: 12px; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 8px; display: none; }
   .lock { font-family: Cinzel, serif; letter-spacing: 2px; font-size: 13px; color: var(--muted); margin-top: 28px; }
   .lock b { display: block; color: var(--gold); font-size: 16px; margin-top: 4px; }
-  .flash { animation: flash .5s 3; }
-  @keyframes flash { 50% { background: #dff4ff; } }
 
   /* Textes des fenêtres (dialogues, réponses) : même écriture élégante que la lettre */
   .story { font-family: Cinzel, serif; font-weight: 700; font-size: 17px; line-height: 1.6; letter-spacing: .6px; }
@@ -117,6 +115,38 @@
   #dialog.show { display: block; }
   #dialog::after { content: ""; position: absolute; right: 30px; bottom: 12px; border: 6px solid transparent; border-top-color: var(--gold); animation: blink .9s steps(2) infinite; }
 
+  /* Ch.1 · La sphère sur l'eau : on la touche pour lancer les 8 questions de foot */
+  .lake { position: relative; width: 240px; height: 260px; margin: 20px auto 0; }
+  .sphere { cursor: pointer; }
+  .sphere { position: absolute; left: 25px; top: 0; width: 190px; height: 190px; animation: sphFloat 3.6s ease-in-out infinite; }
+  .sph-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(143, 220, 255, .5); animation: spin 14s linear infinite; }
+  .sph-ring::before { content: ""; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #dff6ff; box-shadow: 0 0 12px 4px rgba(143, 220, 255, .8); }
+  .sph-ring:not(.r2)::before { display: none; }
+  .sph-crystals { position: absolute; inset: 0; animation: spin 24s linear infinite; }
+  .sph-crystals span { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px; transform: rotate(calc(var(--i) * 45deg)) translateY(-95px) rotate(45deg);
+    border: 1px solid rgba(255, 215, 106, .7); background: rgba(10, 20, 60, .85); transition: background .4s, box-shadow .4s; }
+  .sph-crystals span.on { background: radial-gradient(circle, #fffbe6, var(--gold) 60%, #c8901e); box-shadow: 0 0 14px 3px rgba(255, 215, 106, .85); }
+  .sph-label { font-family: Cinzel, serif; letter-spacing: 2px; font-size: 13px; color: var(--muted); margin: 0; }
+  #sNext { margin-top: 12px; font-size: 13px; padding: 10px 16px; }
+  #sNext[hidden] { display: none; }
+  .sph-ring.r2 { inset: 22px; animation-duration: 9s; animation-direction: reverse; border-color: rgba(255, 215, 106, .45); }
+  .sph-ring.r2::before { background: #fff3c4; box-shadow: 0 0 12px 4px rgba(255, 215, 106, .8); }
+  .sph-orb { position: absolute; inset: 48px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff, #bfeaff 25%, #3f9ee0 60%, #0c2f66);
+    box-shadow: 0 0 40px 10px rgba(143, 220, 255, .55); animation: sphGlow 2.6s ease-in-out infinite; transition: filter 1s; }
+  .sph-orb.burst { animation: none; filter: brightness(1.8); box-shadow: 0 0 90px 40px rgba(223, 246, 255, .8); }
+  .engrave { position: absolute; left: 5px; top: -20px; width: 230px; height: 230px; animation: spin 24s linear infinite; pointer-events: none; transition: opacity 1s; }
+  .engrave text { font-family: Cinzel, serif; font-weight: 700; font-size: 11.5px; letter-spacing: 3px; fill: var(--gold); filter: drop-shadow(0 0 4px rgba(255, 215, 106, .8)); }
+  .sph-reflet { position: absolute; left: 70px; top: 205px; width: 100px; height: 40px; border-radius: 50%; filter: blur(6px);
+    background: radial-gradient(ellipse, rgba(143, 220, 255, .55), transparent 70%); animation: sphGlow 3.6s ease-in-out infinite; }
+  .sph-wave { position: absolute; left: 50%; top: 222px; width: 60px; height: 16px; margin-left: -30px; border-radius: 50%; border: 1px solid rgba(143, 220, 255, .7); animation: ripple 3.6s ease-out infinite; }
+  .sph-wave.w2 { animation-delay: -1.2s; } .sph-wave.w3 { animation-delay: -2.4s; }
+  @keyframes sphFloat { 50% { transform: translateY(-8px); } }
+  @keyframes sphGlow { 50% { opacity: .55; } }
+  @keyframes ripple { from { transform: scale(.4); opacity: 1; } to { transform: scale(3.6); opacity: 0; } }
+  .blank { display: inline-block; min-width: 90px; border-bottom: 2px solid var(--gold); margin-left: 6px; }
+  #sMsg { min-height: 24px; margin: 12px 0 0; font-family: Cinzel, serif; letter-spacing: 1px; color: var(--gold); }
+  #sphereWin { margin-top: 26px; font-size: 22px; color: var(--gold); text-shadow: 0 0 14px rgba(255, 215, 106, .8); animation: up .8s ease-out; }
+
   /* Ch.1 · Mission */
   .big-title { font-size: clamp(24px, 8vw, 32px); margin: 0 0 22px; }
   /* Ordre de mission : même cadre doré que la lettre */
@@ -127,25 +157,11 @@
   .m-divider::before, .m-divider::after { content: ""; width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
   .m-divider::after { transform: scaleX(-1); }
   .m-divider i { width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 8px rgba(255, 215, 106, .9); }
-  .m-row { display: grid; grid-template-columns: 78px 1fr; gap: 12px; align-items: baseline; text-align: left; padding: 8px 0; border-top: 1px solid rgba(160, 210, 255, .14); }
+  .m-row { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: baseline; text-align: left; padding: 8px 0; border-top: 1px solid rgba(160, 210, 255, .14); }
   .m-divider + .m-row { border-top: 0; }
   .m-row span { font-family: Cinzel, serif; font-weight: 700; font-size: 12px; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; }
   .m-row p { margin: 0; font-size: 15px; }
-  .inv-title { font-size: 16px; margin: 30px 0 8px; text-align: left; }
-  .inv { list-style: none; margin: 0; padding: 0; text-align: left; }
-  .inv label { display: flex; align-items: center; gap: 14px; padding: 13px 12px; margin-bottom: 8px; cursor: pointer; font-size: 15px;
-    border: 1px solid rgba(160, 210, 255, .25); border-radius: 6px; background: rgba(10, 20, 60, .45); transition: border-color .3s, background .3s; }
-  /* Case à cocher façon cristal FFX : un losange qui s'illumine en doré */
-  .inv input { appearance: none; -webkit-appearance: none; flex: none; width: 18px; height: 18px; margin: 0 4px; cursor: pointer;
-    transform: rotate(45deg); border: 1.5px solid rgba(200, 225, 255, .7); background: rgba(4, 11, 28, .6);
-    box-shadow: inset 0 0 6px rgba(140, 210, 255, .3); transition: background .3s, box-shadow .3s, border-color .3s; }
-  .inv input:checked { border-color: #fff3c4; background: radial-gradient(circle, #fffbe6, var(--gold) 60%, #c8901e);
-    box-shadow: 0 0 12px 3px rgba(255, 215, 106, .75); }
-  .inv label:has(input:checked) { border-color: rgba(255, 215, 106, .6); background: rgba(255, 215, 106, .08); }
-  .inv input:checked + span { color: var(--gold); }
   #invDone { margin-top: 34px; animation: up .8s ease-out; }
-  #invDone .title { font-size: 20px; margin: 0; color: var(--gold); text-shadow: 0 0 14px rgba(255, 215, 106, .8); }
-  #invDone .lock { margin-top: 14px; }
   @keyframes up { from { opacity: 0; transform: translateY(16px); } }
 
   /* Ch.2 · Tableau des départs */
@@ -182,11 +198,12 @@
   .env::before { content: ""; position: absolute; inset: 0 0 40% 0; background: #a9c6e8; clip-path: polygon(0 0, 100% 0, 50% 100%); border-radius: 6px 6px 0 0; }
   .orb { width: 110px; height: 110px; margin: 0 auto 22px; border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, #f3e6ff, #9a5bff 45%, #3b1670 80%); box-shadow: 0 0 40px rgba(160, 100, 255, .7); animation: pulse 1.6s ease-in-out infinite; }
-  .ghost-wrap { position: relative; width: 220px; height: 220px; margin: 0 auto 14px; display: grid; place-items: center; }
-  #ghost { width: 200px; animation: haunt 3s ease-in-out infinite;
-    filter: blur(var(--blur, 9px)) brightness(var(--light, .35)) drop-shadow(0 0 22px rgba(160, 100, 255, .7));
-    opacity: var(--op, .8); transition: filter 1.2s, opacity 1.2s, transform 1.2s; }
-  #ghost.fade { opacity: 0; transform: scale(.4); }
+  /* Ectoplasma : d'abord une ombre aux yeux brillants (ton image), puis le vrai Ectoplasma apparaît badge après badge */
+  .ghost-wrap { position: relative; width: 280px; height: 250px; margin: 0 auto 14px; display: grid; place-items: center; }
+  #ghostShadow { position: absolute; inset: 0; background: url(images/ectoplasma-ombre.png) center 42% / 620px auto no-repeat; transition: opacity 1.2s;
+    -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent 100%); mask-image: radial-gradient(closest-side, #000 55%, transparent 100%); animation: haunt 3s ease-in-out infinite; }
+  #ghost { position: relative; width: 200px; opacity: 0; animation: haunt 3s ease-in-out infinite; filter: drop-shadow(0 0 22px rgba(160, 100, 255, .7)); transition: opacity 1.2s, transform 1.2s; }
+  #ghost.fade { opacity: 0 !important; transform: scale(.4); }
   @keyframes haunt { 50% { translate: 0 -10px; } }
   #bossOrb { position: absolute; margin: 0; }
   #bMsg { min-height: 24px; margin: 12px 0 0; font-family: Cinzel, serif; letter-spacing: 1px; color: var(--gold); }
@@ -352,12 +369,30 @@
 <body class="locked">
 <canvas id="confetti"></canvas>
 <!-- Quand on rejoue un chapitre depuis les souvenirs : lien pour revenir -->
-<a class="back-souvenir" id="backSouvenir" href="index.html" hidden>◆ SOUVENIRS</a>
+<a class="back-souvenir" id="backSouvenir" href="index.html?chapitre=souvenir" hidden>◆ SOUVENIRS</a>
 
 <div id="overlay">
   <button class="skip" id="skip">PASSER</button>
 
-  <!-- Chapitre 1 · vendredi soir -->
+  <!-- Chapitre 1 · vendredi soir : d'abord la sphère (8 questions de foot), puis l'ordre de mission -->
+  <div class="screen" id="sSphere">
+    <div class="lake">
+      <div class="sphere" id="sphere"><div class="sph-ring"></div><div class="sph-ring r2"></div><div class="sph-orb" id="sphOrb"></div><div class="sph-crystals" id="sCrystals"></div></div>
+      <svg class="engrave" id="engrave" viewBox="0 0 230 230" aria-label="Prouve que c'est bien toi"><defs><path id="circ" d="M115,115 m-108,0 a108,108 0 1,1 216,0 a108,108 0 1,1 -216,0"/></defs>
+        <text><textPath href="#circ" textLength="670">PROUVE QUE C'EST BIEN TOI ◆ PROUVE QUE C'EST BIEN TOI ◆</textPath></text></svg>
+      <div class="sph-reflet"></div><div class="sph-wave"></div><div class="sph-wave w2"></div><div class="sph-wave w3"></div>
+    </div>
+    <p class="sph-label">Sphère scellée · 8 épreuves</p>
+    <div class="win quiz" id="sphereQuiz" hidden>
+      <p class="step" id="sStep"></p>
+      <p class="q" id="sText"></p>
+      <div class="choices" id="sChoices"></div>
+      <p id="sMsg"></p>
+      <button type="button" class="btn" id="sNext" hidden>Épreuve suivante</button>
+    </div>
+    <p class="title" id="sphereWin" hidden>C'est bien toi.</p>
+  </div>
+
   <div class="screen" id="sMission">
     <p class="big-title title">Mission secrète</p>
     <div class="win mission-box">
@@ -367,20 +402,10 @@
       <div class="m-row"><span>Bagage</span><p>Un petit sac pour une nuit</p></div>
       <div class="m-row"><span>Réveil</span><p>4h30 (oui oui)</p></div>
       <div class="m-row"><span>Départ</span><p>Train de 5h25</p></div>
+      <div class="m-row"><span>Inventaire</span><p>Un change, ta brosse à dents, ton chargeur, ta carte d'identité</p></div>
       <div class="m-row"><span>Règle</span><p>Interdiction de poser des questions</p></div>
     </div>
-    <div id="invList">
-      <p class="inv-title title">Inventaire</p>
-      <ul class="inv">
-        <li><label><input type="checkbox"><span>Un change</span></label></li>
-        <li><label><input type="checkbox"><span>Ta brosse à dents</span></label></li>
-        <li><label><input type="checkbox"><span>Ton chargeur</span></label></li>
-        <li><label><input type="checkbox"><span>Ta carte d'identité</span></label></li>
-      </ul>
-    </div>
-    <!-- Remplace la liste une fois tout coché -->
-    <div id="invDone" hidden>
-      <p class="title">Inventaire complet</p>
+    <div id="invDone">
       <p class="lock">Chapitre 2 dans<b id="lockMission"></b></p>
     </div>
   </div>
@@ -414,7 +439,7 @@
   <div class="screen" id="sLetter">
     <div class="env"></div>
     <p class="title" style="font-size:19px;margin:0">Deniz, une lettre t'attend…</p>
-    <p style="margin:26px 0 0"><a class="open-letter" href="mot.html"><i></i>OUVRIR<i></i></a></p>
+    <p style="margin:26px 0 0"><a class="open-letter" id="openLetterBtn" href="mot.html"><i></i>OUVRIR<i></i></a></p>
     <button class="link-muted" data-close>voir le programme du week-end</button>
   </div>
 
@@ -423,6 +448,7 @@
     <div id="bossStart">
       <!-- Ectoplasma, d'abord une ombre floue ; il devient plus net à chaque badge -->
       <div class="ghost-wrap">
+        <div id="ghostShadow"></div>
         <img id="ghost" src="images/ectoplasma.png" alt="Ectoplasma">
         <div class="orb gold" id="bossOrb" hidden></div>
       </div>
@@ -457,7 +483,7 @@
 
   <!-- Mode souvenir (à partir du lundi 21 décembre) : tout est débloqué, et on peut tout revivre -->
   <section class="souvenirs" id="souvenirs" hidden>
-    <a class="open-letter" href="mot.html"><i></i>RELIRE LA LETTRE<i></i></a>
+    <a class="open-letter" href="mot.html?souvenir"><i></i>RELIRE LA LETTRE<i></i></a>
     <h2 class="sec-title title" style="margin-top:40px">Rejouer un chapitre</h2>
     <div class="replay-list">
       <a class="win replay" href="index.html?chapitre=1&amp;souvenir"><b>I</b>La mission secrète</a>
@@ -820,19 +846,6 @@
     if (screen === 'sBoss' && !bossStarted) bossFight();
   });
 
-  // ---------- Ch.1 · Inventaire ----------
-  const boxes = document.querySelectorAll('.inv input');
-  boxes.forEach(b => b.addEventListener('change', () => {
-    if ([...boxes].every(x => x.checked)) {
-      // Petite pause pour voir le dernier cristal s'allumer, puis la liste laisse place au compte à rebours.
-      setTimeout(() => {
-        document.getElementById('invList').hidden = true;
-        document.getElementById('invDone').hidden = false;
-        confetti(innerWidth / 2, innerHeight / 2, 120);
-      }, 600);
-    }
-  }));
-
   // ---------- Ch.2 · Devine la destination ----------
   const feedback = document.getElementById('feedback');
   const input = document.getElementById('guessInput');
@@ -901,7 +914,6 @@
     document.getElementById('xp').classList.add('full');
     setTimeout(() => {
       document.getElementById('lvl').textContent = '33';
-      overlay.classList.add('flash');
       confetti(innerWidth / 2, innerHeight / 2, 140);
       startDialog(levelLines, () => closeOverlay(), i => { if (i === 4) confetti(innerWidth / 2, innerHeight / 2, 100); });
     }, 1500);
@@ -915,30 +927,48 @@
   // Chaque question a son propre message de réussite et 3 messages d'erreur, tous différents.
   const ghost = document.getElementById('ghost');
   const bossRounds = [
-    { q: 'À quel niveau Fantominus évolue-t-il en Spectrum ?', choices: ['Niveau 20', 'Niveau 25', 'Niveau 30', 'Niveau 35'], good: 'Niveau 25',
-      win: 'Ectoplasma s\'approche un peu…', miss: ['Ectoplasma ricane dans l\'ombre…', 'Il compte sur ses doigts… et se moque de toi.', 'Il bâille. Même Fantominus le saurait !'] },
-    { q: 'Quel membre du Conseil des 4 de Rouge et Bleu fait combattre des Ectoplasma ?', choices: ['Olga', 'Aldo', 'Agatha', 'Peter'], good: 'Agatha',
-      win: 'Ses yeux brillent moins fort…', miss: ['Ectoplasma te tire la langue.', 'Une vieille dame au fond de la salle soupire…', 'Ectoplasma tourne autour de toi en riant.'] },
-    { q: 'Quel est le talent d\'Ectoplasma dans Pokémon Émeraude ?', choices: ['Lévitation', 'Corps Maudit', 'Statik', 'Intimidation'], good: 'Lévitation',
-      win: 'Il flotte un peu plus près de toi…', miss: ['Ectoplasma traverse le mur et revient, déçu.', 'Il s\'enfonce dans le sol… puis remonte.', 'Ses pieds ne touchent même pas le sol. Indice !'] },
-    { q: 'Dans Rouge et Bleu, où trouve-t-on Fantominus ?', choices: ['Mont Sélénite', 'Tour Pokémon de Lavanville', 'Grotte Azurée', 'La Centrale'], good: 'Tour Pokémon de Lavanville',
-      win: 'Il se souvient de Lavanville…', miss: ['Une mélodie triste résonne au loin…', 'Ectoplasma secoue la tête. Pense aux fantômes…', 'Il pointe du doigt une ville violette…'] },
-    { q: 'Dans Rouge et Bleu, quel objet permet d\'identifier les fantômes de la Tour Pokémon ?', choices: ['Poké Flûte', 'Scope Sylphe', 'Carte Magnétique', 'Lunettes Noires'], good: 'Scope Sylphe',
-      win: 'Il te laisse enfin le voir clairement…', miss: ['« Fantôme ! Impossible de l\'identifier ! »', 'Ectoplasma se rend invisible un instant…', 'Il chuchote : « Sylphe SARL… »'] },
-    { q: 'Dans Rouge et Bleu, quel Pokémon fantôme bloque l\'escalier de la Tour Pokémon ?', choices: ['Spectrum', 'Ossatueur', 'Ectoplasma', 'Mélofée'], good: 'Ossatueur',
-      win: 'Il baisse les yeux, ému…', miss: ['Ectoplasma devient tout pâle…', 'Un petit Osselait pleure quelque part…', 'Il murmure : « une maman… »'] },
-    { q: 'Comment s\'appelle la région de Pokémon Émeraude ?', choices: ['Kanto', 'Johto', 'Hoenn', 'Sinnoh'], good: 'Hoenn',
-      win: 'Il ne s\'enfuit plus…', miss: ['Ectoplasma fait semblant de dormir.', 'Il dessine une carte pleine d\'eau dans les airs…', 'Il imite un Poussifeu… tu chauffes !'] },
-    { q: 'Quel Pokémon légendaire est sur la jaquette d\'Émeraude ?', choices: ['Groudon', 'Kyogre', 'Rayquaza', 'Latios'], good: 'Rayquaza',
-      win: 'Ectoplasma te fait confiance.', miss: ['Il lève les yeux vers le ciel…', 'Un grand dragon vert passe dans sa tête…', 'Il fait le geste d\'un serpent qui vole…'] }
+    { q: 'Quel Pokémon légendaire faut-il réveiller pour calmer le combat entre Groudon et Kyogre ?', choices: ['Latios', 'Rayquaza', 'Deoxys', 'Regigigas'], good: 'Rayquaza',
+      hint: ['il est le médiateur des deux autres.', 'c\'est le Pokémon vert de la jaquette d\'Émeraude.'], last: 'Ectoplasma lève les yeux vers le ciel…',
+      win: 'Ectoplasma s\'approche un peu…' },
+    { q: 'Combien de dresseurs faut-il battre à la Ligue Pokémon d\'Émeraude, Maître compris ?', choices: ['4', '5', '6', '8'], good: '5',
+      hint: ['il y a quatre membres du Conseil avant le dernier combat.', 'le dernier adversaire est le Maître, Marc.'], last: 'Ectoplasma compte sur ses doigts… et ricane.',
+      win: 'Ses yeux brillent moins fort…' },
+    { q: 'Quel est le dernier Pokémon de Marc, le Maître de la Ligue d\'Émeraude ?', choices: ['Métalosse', 'Milobellus', 'Léviator', 'Rayquaza'], good: 'Milobellus',
+      hint: ['c\'est un Pokémon de type Eau.', 'on le dit le plus beau de tous les Pokémon.'], last: 'Ectoplasma imite une danse aquatique…',
+      win: 'Il penche la tête, curieux…' },
+    { q: 'Dans quelle ville se trouve la Grotte Tréfonds ?', choices: ['Algatia', 'Atalanopolis', 'Nénucrique', 'Vergazon'], good: 'Atalanopolis',
+      hint: ['la ville est bâtie dans un cratère.', 'son arène est celle de type Eau.'], last: 'Ectoplasma plonge… et ressort trempé.',
+      win: 'Il flotte un peu plus près de toi…' },
+    { q: 'Quel objet faut-il faire tenir à Coquiperl pour qu\'il évolue en Serpang, par échange ?', choices: ['Écaille Océan', 'Dent Océan', 'Pierre Eau', 'Perle'], good: 'Dent Océan',
+      hint: ['il faut le faire tenir pendant un échange.', 'l\'Écaille Océan donne Rosabyss… pas Serpang.'], last: 'Ectoplasma claque des dents…',
+      win: 'Il te laisse enfin le voir…' },
+    { q: 'Quel Pokémon légendaire se cache dans la Grotte Terra ?', choices: ['Kyogre', 'Groudon', 'Regirock', 'Rayquaza'], good: 'Groudon',
+      hint: ['il est associé à la terre et aux continents.', 'c\'est le rival de Kyogre.'], last: 'Le sol tremble sous Ectoplasma…',
+      win: 'Il baisse les yeux, ému…' },
+    { q: 'Comment s\'appelle la zone qu\'on découvre après la Ligue, avec sept symboles à gagner ?', choices: ['La Tour de Combat', 'La Zone de Combat', 'Le Château de Combat', 'L\'Arène de Combat'], good: 'La Zone de Combat',
+      hint: ['elle propose plusieurs installations de combat.', 'on y gagne sept symboles.'], last: 'Ectoplasma bâille… il attend mieux de toi.',
+      win: 'Il ne s\'enfuit plus…' },
+    { q: 'Quels Pokémon faut-il placer en premier et en dernier dans l\'équipe pour ouvrir la Chambre Scellée ?', choices: ['Relicanth et Wailord', 'Wailord et Relicanth', 'Kyogre et Groudon', 'Lanturn et Relicanth'], good: 'Wailord et Relicanth',
+      hint: ['il faut déchiffrer des inscriptions en braille.', 'le premier est une baleine géante, le dernier un poisson très ancien.'], last: 'Ectoplasma trace des points en braille dans l\'air…',
+      win: 'Ectoplasma te fait confiance.' },
+    // Les 2 questions bonus (après les 8 badges)
+    { q: 'BONUS · Qu\'est-ce qui rend Ectoplasma immunisé contre les attaques Normal et Combat ?', choices: ['Son talent Lévitation', 'Son type Spectre', 'Son type Poison', 'Une baie'], good: 'Son type Spectre',
+      hint: ['ce n\'est pas son talent.', 'c\'est lié à sa nature de fantôme.'], last: 'Ectoplasma traverse le mur pour te montrer…',
+      win: 'Les coups passent à travers lui !' },
+    { q: 'BONUS · Quelle est la statistique de base la plus élevée d\'Ectoplasma ?', choices: ['Vitesse', 'Attaque', 'Attaque Spéciale', 'Défense Spéciale'], good: 'Attaque Spéciale',
+      hint: ['ce n\'est pas sa vitesse.', 'elle lui permet de frapper fort avec ses attaques spéciales.'], last: 'Ectoplasma lance un Ball\'Ombre… raté !',
+      win: '130 ! Ectoplasma est impressionné.' }
   ];
+  bossRounds.forEach(r => { r.miss = ['Indice 1 : ' + r.hint[0], 'Indice 2 : ' + r.hint[1], r.last]; });
+  // 8 badges, puis 2 questions bonus
+  const BADGES = 8;
   let bRound = 0, bMiss = 0, bLocked = false;
-  q$('badges').innerHTML = bossRounds.map((_, i) => `<span class="slot" id="b${i}">${i + 1}</span>`).join('');
+  q$('badges').innerHTML = bossRounds.slice(0, BADGES).map((_, i) => `<span class="slot" id="b${i}">${i + 1}</span>`).join('');
 
   function showBossRound() {
     const r = bossRounds[bRound];
     bMiss = 0; bLocked = false;
-    q$('bStep').textContent = `Badge ${bRound + 1} / ${bossRounds.length}`;
+    q$('bStep').textContent = bRound < BADGES ? `Badge ${bRound + 1} / ${BADGES}` : `Bonus ${bRound - BADGES + 1} / ${bossRounds.length - BADGES}`;
     q$('bText').textContent = r.q;
     q$('bMsg').textContent = '';
     q$('bChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
@@ -957,12 +987,13 @@
     bLocked = true;
     b.classList.add('good'); b.classList.remove('blink');
     q$('bMsg').textContent = r.win;
-    q$('b' + bRound).classList.add('on');
-    // L'ombre devient plus nette et plus lumineuse à chaque badge
-    const k = (bRound + 1) / bossRounds.length;
-    ghost.style.setProperty('--blur', (9 - 9 * k) + 'px');
-    ghost.style.setProperty('--light', (.35 + .65 * k).toFixed(2));
-    ghost.style.setProperty('--op', (.8 + .2 * k).toFixed(2));
+    if (bRound < BADGES) {
+      q$('b' + bRound).classList.add('on');
+      // À chaque badge, l'ombre s'efface et le vrai Ectoplasma apparaît un peu plus
+      const k = (bRound + 1) / BADGES;
+      ghost.style.opacity = k;
+      q$('ghostShadow').style.opacity = 1 - k;
+    }
     const box = b.getBoundingClientRect();
     confetti(box.left + box.width / 2, box.top, 50);
     setTimeout(() => {
@@ -974,7 +1005,6 @@
 
   function bossFight() {
     bossStarted = true;
-    overlay.classList.add('flash');
     q$('bossPress').hidden = true;
     q$('bossText').textContent = '';
     startDialog([
@@ -1001,7 +1031,7 @@
       document.getElementById('bossEnd').style.display = 'block';
       confetti(innerWidth / 2, innerHeight / 3, 200);
     }, i => {
-      if (i === 1) { ghost.classList.add('fade'); pyreBurst(); }
+      if (i === 1) { ghost.classList.add('fade'); q$('ghostShadow').style.opacity = 0; pyreBurst(); }
       if (i === 2) { q$('bossOrb').hidden = false; q$('bossText').textContent = ''; }
       if (i === 3) confetti(innerWidth / 2, innerHeight / 3, 140);
     });
@@ -1020,32 +1050,41 @@
   const kits = {
     om:     { label: 'OM · À jamais les premiers', body: '#ffffff', trim: '#2faee0', text: '#2faee0' },
     bjk:    { label: 'Beşiktaş · Les Aigles noirs', body: 'url(#stripes)', trim: '#111111', text: '#d4af37', back: '#111111' },
-    real:   { label: 'Real Madrid · Los Blancos', body: '#ffffff', trim: '#c9a227', text: '#2b2b6b' },
-    inter:  { label: 'Inter · I Nerazzurri', body: 'url(#inter)', trim: '#111111', text: '#ffd76a', back: '#111111' },
-    mu:     { label: 'Manchester United · Red Devils', body: '#d81920', trim: '#111111', text: '#ffffff' },
     bjk2:   { label: 'Beşiktaş · Maillot extérieur', body: '#ffffff', trim: '#111111', text: '#111111' },
-    fra:    { label: 'Équipe de France · Les Bleus', body: '#1d2a6b', trim: '#d0102b', text: '#ffffff' },
+    mu:     { label: 'Manchester United · Red Devils', body: '#d81920', trim: '#111111', text: '#ffffff' },
+    real:   { label: 'Real Madrid · Los Blancos', body: '#ffffff', trim: '#c9a227', text: '#2b2b6b' },
+    whu:    { label: 'West Ham · The Hammers', body: '#7a263a', trim: '#1bb1e7', text: '#ffffff' },
+    retro:  { label: 'Beşiktaş · 1903', body: '#efe6cf', trim: '#111111', text: '#111111' },
     legend: { label: 'Maillot légendaire · Deniz 33', body: 'url(#legend)', trim: '#fff3c4', text: '#3a2a05' }
   };
   // 8 épreuves, chacune avec son message de réussite et 3 messages d'erreur, tous différents.
   const footRounds = [
-    { q: 'Qui entraînait l\'OM lors de la victoire en Ligue des champions 1993 ?', choices: ['Gérard Gili', 'Raymond Goethals', 'Franz Beckenbauer', 'Jean Fernandez'], good: 'Raymond Goethals', kit: 'om',
-      win: 'Le sorcier belge. À jamais les premiers !', miss: ['Carton jaune !', 'Le Vélodrome siffle…', 'Même Basile Boli en tombe de sa chaise !'] },
-    { q: 'En quelle année Beşiktaş a-t-il inauguré son stade, le Vodafone Park ?', choices: ['2012', '2014', '2016', '2018'], good: '2016', kit: 'bjk',
-      win: 'L\'année où Talisca a rejoint les Aigles noirs !', miss: ['Hors-jeu !', 'Les Aigles noirs secouent la tête…', 'Pense à l\'arrivée de Talisca…'] },
-    { q: 'En quelle année Benzema a-t-il quitté Lyon pour rejoindre le Real Madrid ?', choices: ['2007', '2008', '2009', '2011'], good: '2009', kit: 'real',
-      win: 'L\'été 2009 ! Et il est né un 19 décembre… comme toi !', miss: ['Penalty manqué !', 'Karim lève un sourcil…', 'La même année que Cristiano Ronaldo…'] },
-    { q: 'Quel est le surnom de l\'Inter Milan ?', choices: ['I Rossoneri', 'I Nerazzurri', 'I Bianconeri', 'I Giallorossi'], good: 'I Nerazzurri', kit: 'inter',
-      win: 'Forza Inter !', miss: ['Ça, c\'est l\'autre club de Milan…', 'Mamma mia, non !', 'Noir et bleu… en italien !'] },
-    { q: 'Contre quel club Manchester United a-t-il gagné la finale de la Ligue des champions 1999 ?', choices: ['Juventus', 'Bayern Munich', 'Barcelone', 'Chelsea'], good: 'Bayern Munich', kit: 'mu',
-      win: 'Deux buts dans les arrêts de jeu. Légendaire !', miss: ['Sir Alex mâche son chewing-gum, furieux…', 'Raté ! Les Red Devils grimacent.', 'Indice : une équipe allemande…'] },
-    { q: 'En quelle année Beşiktaş a-t-il été fondé ?', choices: ['1903', '1905', '1907', '1923'], good: '1903', kit: 'bjk2',
-      win: 'Le plus ancien des trois grands d\'Istanbul !', miss: ['Ça, c\'est Galatasaray…', 'Ça, c\'est Fenerbahçe…', 'Indice : le plus ancien des trois grands…'] },
-    { q: 'Contre quel pays Payet a-t-il marqué le but de la victoire au match d\'ouverture de l\'Euro 2016 ?', choices: ['Albanie', 'Suisse', 'Roumanie', 'Islande'], good: 'Roumanie', kit: 'fra',
-      win: 'Une frappe dans la lucarne, et des larmes de joie !', miss: ['Le Stade de France retient son souffle…', 'Payet se gratte la tête…', 'C\'était le tout premier match…'] },
-    { q: 'Sur quelle île est né Dimitri Payet ?', choices: ['La Martinique', 'La Guadeloupe', 'La Réunion', 'La Corse'], good: 'La Réunion', kit: 'legend',
-      win: 'Le Payet de La Réunion, une légende !', miss: ['Carton rouge… mais on te laisse revenir.', 'Payet regarde vers l\'océan Indien…', 'Pense au volcan…'] }
+    { q: 'OM 1993 · Qui délivre la passe décisive sur le but de Basile Boli en finale contre le Milan AC ?', choices: ['Rudi Völler', 'Abedi Pelé', 'Alen Bokšić', 'Didier Deschamps'], good: 'Abedi Pelé', kit: 'om',
+      hint: ['c\'est un joueur offensif ghanéen.', 'il porte le surnom du roi brésilien du football.'], last: 'Même Basile Boli en tombe de sa chaise…',
+      win: 'Le corner d\'Abedi Pelé, la tête de Boli… À jamais les premiers !' },
+    { q: 'Beşiktaş · Contre quel club se joue le tout premier match au Vodafone Park, en avril 2016 ?', choices: ['Galatasaray', 'Fenerbahçe', 'Bursaspor', 'Trabzonspor'], good: 'Bursaspor', kit: 'bjk',
+      hint: ['c\'est un club turc.', 'son nom commence par B, et ses couleurs sont vert et blanc.'], last: 'Le Vodafone Park retient son souffle…',
+      win: 'Un 3-2 pour inaugurer la maison des Aigles noirs !' },
+    { q: 'Talisca · De quel club portugais Beşiktaş obtient-il Talisca en prêt, en août 2016 ?', choices: ['FC Porto', 'Sporting', 'Benfica', 'Braga'], good: 'Benfica', kit: 'bjk2',
+      hint: ['c\'est un club de Lisbonne.', 'son stade est l\'Estádio da Luz.'], last: 'Talisca se gratte la tête…',
+      win: 'Prêté par Benfica, adopté par les Aigles noirs !' },
+    { q: 'Man United 1999 · Quels remplaçants marquent contre le Bayern en finale, et à quelles minutes ?', choices: ['Sheringham (90+1) et Solskjær (90+3)', 'Solskjær (90+1) et Sheringham (90+3)', 'Yorke (88) et Cole (90+2)', 'Sheringham (89) et Solskjær (90+2)'], good: 'Sheringham (90+1) et Solskjær (90+3)', kit: 'mu',
+      hint: ['le premier est un attaquant anglais.', 'le second est un attaquant norvégien surnommé le « Super Sub ».'], last: 'Sir Alex regarde sa montre…',
+      win: 'Deux buts en deux minutes. Glory Glory Man United !' },
+    { q: 'Benzema · Contre quel club marque-t-il son tout premier but officiel avec Lyon, en décembre 2005 ?', choices: ['Real Madrid', 'Olympiakos', 'Rosenborg', 'Monaco'], good: 'Rosenborg', kit: 'real',
+      hint: ['c\'est un club scandinave.', 'il joue dans le championnat norvégien.'], last: 'Karim lève un sourcil…',
+      win: 'Le début d\'une légende… née un 19 décembre, comme toi !' },
+    { q: 'Payet · En 2015-2016, sa première saison à West Ham, combien de buts et de passes décisives en Premier League ?', choices: ['12 buts et 9 passes', '9 buts et 12 passes', '7 buts et 10 passes', '10 buts et 8 passes'], good: '9 buts et 12 passes', kit: 'whu',
+      hint: ['il marque moins de 10 buts.', 'il fait plus de passes décisives que de buts.'], last: 'Les Hammers chantent son nom… cherche encore !',
+      win: 'Le roi de l\'Est londonien, avant de revenir au Vélodrome !' },
+    { q: 'Beşiktaş · Quel est le nom du club à sa fondation, en 1903 ?', choices: ['Osmanlı Futbol Kulübü', 'Bereket Jimnastik Kulübü', 'Kara Kartal Spor Kulübü', 'Boğaziçi Jimnastik Kulübü'], good: 'Bereket Jimnastik Kulübü', kit: 'retro',
+      hint: ['le nom contient le mot « Bereket ».', 'il fait référence à un sport pratiqué avant le football.'], last: 'L\'aigle noir plisse les yeux…',
+      win: 'Un club de gymnastique, avant de devenir une légende du foot !' },
+    { q: 'OM 1993 · À quelle minute Basile Boli marque-t-il le but de la victoire contre le Milan AC ?', choices: ['38e', '41e', '43e', '45e'], good: '43e', kit: 'legend',
+      hint: ['le but arrive en première période.', 'il est marqué juste avant la mi-temps, après la 42e minute.'], last: 'Le Vélodrome compte les secondes…',
+      win: 'La 43e minute. À jamais les premiers, pour toujours !' }
   ];
+  footRounds.forEach(r => { r.miss = ['Indice 1 : ' + r.hint[0], 'Indice 2 : ' + r.hint[1], r.last]; });
   q$('slots').innerHTML = footRounds.map((_, i) => `<span id="s${i}" style="--i:${i}"></span>`).join('');
   // Le bouton « Forcer le verrou » lance les épreuves du maillot
   q$('forceBtn').addEventListener('click', () => {
@@ -1189,23 +1228,32 @@
   // ---------- Billet retour : 8 épreuves Final Fantasy (FF7 puis FF10), à partir du dimanche 17h ----------
   // Chaque question a son propre message de réussite et 3 messages d'erreur, tous différents.
   const ffRounds = [
-    { q: 'FF7 · Dans quel village Cloud et Tifa ont-ils grandi ?', choices: ['Kalm', 'Nibelheim', 'Junon', 'Gongaga'], good: 'Nibelheim',
-      win: 'Une sphère s\'allume…', miss: ['Un Pampa te bloque la route…', 'Tifa croise les bras, déçue.', 'Pense au château d\'eau du village…'] },
-    { q: 'FF7 · Comment s\'appelle le parc d\'attractions géant de FF7 ?', choices: ['Gold Saucer', 'Wall Market', 'Costa del Sol', 'Fort Condor'], good: 'Gold Saucer',
-      win: 'Les feux d\'artifice éclatent au-dessus du parc !', miss: ['Le chocobo de la course te dépasse…', 'Cait Sith te prédit… un échec.', 'Indice : il est en or…'] },
-    { q: 'FF7 · Quelle est l\'arme ultime de Cloud ?', choices: ['Ragnarok', 'Masamune', 'Ultima Weapon', 'Excalibur'], good: 'Ultima Weapon',
-      win: 'La lame brille.', miss: ['Ça, c\'est l\'épée d\'un autre…', 'Sephiroth sourit dans l\'ombre…', 'Elle porte le nom de la magie suprême…'] },
-    { q: 'FF7 · Où Aerith perd-elle la vie ?', choices: ['Le Temple des Anciens', 'La Cité des Anciens', 'Le Cratère Nord', 'Nibelheim'], good: 'La Cité des Anciens',
-      win: 'Une fleur pousse dans l\'eau…', miss: ['Une musique triste commence…', 'Le chocobo baisse la tête.', 'Pas le temple… la cité.'] },
-    { q: 'FF10 · Comment s\'appelle l\'équipe de blitzball de Tidus à Zanarkand ?', choices: ['Besaid Aurochs', 'Luca Goers', 'Zanarkand Abes', 'Al Bhed Psyches'], good: 'Zanarkand Abes',
-      win: 'Les Abes saluent leur star !', miss: ['Ça, c\'est l\'équipe de Wakka !', 'Le ballon file dans la mauvaise sphère…', 'Pense à la ville natale de Tidus…'] },
-    { q: 'FF10 · Qui était, avec Jecht, le gardien de Braska… et protège aussi Yuna ?', choices: ['Kimahri', 'Auron', 'Wakka', 'Seymour'], good: 'Auron',
-      win: 'Auron remonte ses lunettes. « Bien. »', miss: ['Seymour te sourit… méfie-toi.', 'Rikku pouffe de rire.', 'Indice : il a une grande cape rouge…'] },
-    { q: 'FF10 · Quelle est l\'arme céleste de Tidus ?', choices: ['Caladbolg', 'Nirvana', 'World Champion', 'Masamune'], good: 'Caladbolg',
-      win: 'Le Sphérier s\'illumine !', miss: ['Ça, c\'est l\'arme de Yuna…', 'Un cactuar s\'enfuit en courant…', 'Elle commence par un C…'] },
-    { q: 'FF10 · Quelle est la première chimère que Yuna obtient, à Besaid ?', choices: ['Ifrit', 'Valefor', 'Ixion', 'Shiva'], good: 'Valefor',
-      win: 'Valefor déploie ses ailes !', miss: ['Même Kimahri secoue la tête…', 'Une plume rose tombe du ciel…', 'Elle vole, et c\'est la toute première…'] }
+    { q: 'Qui est le priant qui donne naissance à la chimère Anima ?', choices: ['Le père de Seymour', 'La mère de Seymour', 'Lady Yunalesca', 'Lord Zaon'], good: 'La mère de Seymour',
+      hint: ['il est lié à l\'histoire de Seymour.', 'c\'est un membre de sa famille, lié à son enfance.'], last: 'Une chaîne cliquette dans l\'ombre…',
+      win: 'Anima s\'éveille…' },
+    { q: 'Dans quel lieu secret peut-on recruter Yojimbo ?', choices: ['Le Temple de Baaj', 'La Grotte du Priant volé', 'Le Mont Gagazet', 'Le Temple de Remiem'], good: 'La Grotte du Priant volé',
+      hint: ['il faut explorer une grotte facultative.', 'son nom parle d\'un priant qu\'on a volé.'], last: 'Daigoro aboie…',
+      win: 'Yojimbo accepte ton prix… pour cette fois.' },
+    { q: 'Course de chocobos : quel temps final faut-il pour obtenir le Sceau solaire de Tidus ?', choices: ['Moins de 0:05:0', '0:00:0 ou moins', 'Moins de 0:10:0', 'Exactement 0:33:0'], good: '0:00:0 ou moins',
+      hint: ['il faut battre le temps de la dresseuse.', 'après les ballons et les oiseaux, le temps final doit être de zéro ou moins.'], last: 'Un chocobo te double en riant…',
+      win: 'Le chocobo franchit la ligne… en un temps nul !' },
+    { q: 'Comment débloquer la Lance spirituelle de Kimahri ?', choices: ['Esquiver 200 éclairs dans la Plaine Foudroyée', 'Activer 3 pierres Qactuar dans la Plaine Foudroyée, puis prier à la tour', 'Battre Biran Ronso au Mont Gagazet', 'Trouver 10 Qactuars à Luca'], good: 'Activer 3 pierres Qactuar dans la Plaine Foudroyée, puis prier à la tour',
+      hint: ['il faut toucher des pierres mystérieuses, dans une zone traversée plusieurs fois.', 'ces pierres représentent des créatures de cette région.'], last: 'Kimahri ne dit rien… Kimahri attend.',
+      win: 'Kimahri lève sa lance. Kimahri content.' },
+    { q: 'Quel mot de passe, entré dans le vaisseau, révèle l\'emplacement de l\'arme ultime de Rikku ?', choices: ['ZANARKAND', 'GODHAND', 'SPIRA', 'BLITZACE'], good: 'GODHAND',
+      hint: ['c\'est un mot anglais fait de deux mots.', 'il évoque une main divine.'], last: 'Rikku te tire la langue…',
+      win: 'La main divine… pour Rikku !' },
+    { q: 'Quel est le tout premier boss affronté par Tidus à Zanarkand ?', choices: ['Sinspawn Geneaux', 'Sinspawn Ammes', 'Sinspawn Echuilles', 'Tros'], good: 'Sinspawn Ammes',
+      hint: ['c\'est une créature envoyée par Sin.', 'après « Sinspawn », son nom ne fait que cinq lettres.'], last: 'Le stade de blitzball s\'effondre…',
+      win: 'Auron hoche la tête : « Bien. »' },
+    { q: 'Quels sont les deux objets qui débloquent les Sœurs Magus au temple de Remiem ?', choices: ['Couronne d\'or et Sceptre d\'argent', 'Couronne fleurie et Sceptre floral', 'Sceau solaire et Sceau lunaire', 'Clé chocobo et Flûte d\'or'], good: 'Couronne fleurie et Sceptre floral',
+      hint: ['l\'un est une couronne, l\'autre un sceptre.', 'le premier s\'obtient au monstre-arène, le second grâce à Belgemine.'], last: 'Belgemine soupire…',
+      win: 'Cindy, Sandy et Mindy apparaissent !' },
+    { q: 'Quel est le priant de l\'Ultime Chimère de Braska ?', choices: ['Auron', 'Braska lui-même', 'Jecht', 'Lady Yunalesca'], good: 'Jecht',
+      hint: ['c\'est un ancien gardien de Braska.', 'c\'est le père de Tidus.'], last: 'Le ballon de blitzball de Jecht roule à tes pieds…',
+      win: 'Jecht… Tidus a retrouvé son père. Et toi, ton billet !' }
   ];
+  ffRounds.forEach(r => { r.miss = ['Indice 1 : ' + r.hint[0], 'Indice 2 : ' + r.hint[1], r.last]; });
   let rRound = 0, rMiss = 0, rLocked = false, retourQuizShown = false;
   q$('spheres').innerHTML = ffRounds.map((_, i) => `<span class="slot sphere" id="r${i}">${i + 1}</span>`).join('');
 
@@ -1278,6 +1326,91 @@
   }), { threshold: .15 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
+  // ---------- Ch.1 · La sphère : 8 phrases de foot à compléter avant l'ordre de mission ----------
+  let sphereStarted = false;
+  const sphereRounds = [
+    { q: '« Tacler à la gorge comme', choices: ['Vieira', 'Makélélé', 'Gattuso', 'Desailly'], good: 'Makélélé',
+      hint: ['milieu défensif français.', 'Real Madrid, Chelsea.'], last: 'La sphère frissonne… elle attend un vrai récupérateur.',
+      win: 'Récupéré ! La sphère s\'éclaire.' },
+    { q: '« Le guetteur, c\'est pas', choices: ['Nesta', 'Maldini', 'Cannavaro', 'Baresi'], good: 'Maldini',
+      hint: ['légende italienne.', 'AC Milan, toute sa carrière.'], last: 'Une ombre rossonera passe dans la sphère…',
+      win: 'Il Capitano approuve.' },
+    { q: '« Frapper comme', choices: ['Davids', 'Seedorf', 'Gullit', 'Kluivert'], good: 'Seedorf',
+      hint: ['milieu néerlandais.', 'il a gagné la Ligue des champions avec 3 clubs différents.'], last: 'La sphère tremble comme une frappe de 30 mètres…',
+      win: 'Lucarne ! La lumière grandit.' },
+    { q: '« On rêve de la carrière de', choices: ['Owen', 'Beckham', 'Gerrard', 'Lampard'], good: 'Beckham',
+      hint: ['Anglais très médiatisé.', 'Manchester United, Real Madrid.'], last: 'La sphère dessine un coup franc enroulé…',
+      win: 'Bend it like… toi.' },
+    { q: '« Mauvais souvenir comme <span class="blank"></span> au PSG »', choices: ['Okocha', 'Coridon', 'Pauleta', 'Anelka'], good: 'Coridon', full: true,
+      hint: ['ancien joueur du PSG.', 'le but du scorpion contre Porto.'], last: 'La sphère se met en scorpion… sans succès.',
+      win: 'Mauvais souvenir, bonne réponse.' },
+    { q: '« Je garde la cage familiale comme', choices: ['Taffarel', 'Dida', 'Júlio César', 'Buffon'], good: 'Dida',
+      hint: ['gardien brésilien.', 'légende du Milan AC.'], last: 'La sphère plonge… et rate le ballon.',
+      win: 'Arrêt réflexe ! Elle brille encore plus.' },
+    { q: '« Les yeux dans les Bleus comme', choices: ['Thuram', 'Desailly', 'Blanc', 'Lizarazu'], good: 'Desailly',
+      hint: ['défenseur français.', 'champion du monde 1998.'], last: 'Un reflet bleu, blanc, rouge traverse la sphère…',
+      win: 'Le Roc a parlé.' },
+    { q: '« Ta meuf elle simule comme', choices: ['Shevchenko', 'Inzaghi', 'Del Piero', 'Vieri'], good: 'Inzaghi',
+      hint: ['attaquant italien.', 'le renard des surfaces du Milan AC.'], last: 'La sphère tombe dans la surface… penalty ?',
+      win: 'Hors-jeu ? Non : validé !' }
+  ];
+  // Ici, les indices s'affichent tels quels (sans « Indice 1 : »)
+  const cap = s => s[0].toUpperCase() + s.slice(1);
+  sphereRounds.forEach(r => { r.miss = [cap(r.hint[0]), cap(r.hint[1]), r.last]; });
+  let sRound = 0, sMiss = 0, sLocked = false;
+  q$('sCrystals').innerHTML = sphereRounds.map((_, i) => `<span id="sp${i}" style="--i:${i}"></span>`).join('');
+  q$('sphere').addEventListener('click', () => { if (!sphereStarted) sphereStart(); });
+  q$('sNext').addEventListener('click', () => { sRound++; showSphereRound(); });
+
+  function sphereStart() {
+    sphereStarted = true;
+    q$('sphereQuiz').hidden = false;
+    showSphereRound();
+    setTimeout(() => q$('sphereQuiz').scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+  }
+  function showSphereRound() {
+    const r = sphereRounds[sRound];
+    sMiss = 0; sLocked = false;
+    q$('sStep').textContent = `Épreuve ${sRound + 1} / ${sphereRounds.length}`;
+    // Les phrases à compléter finissent par un blanc
+    q$('sText').innerHTML = r.full ? r.q : r.q + '<span class="blank"></span> »';
+    q$('sMsg').textContent = '';
+    q$('sNext').hidden = true;
+    q$('sChoices').innerHTML = r.choices.map(c => `<button type="button">${c}</button>`).join('');
+    q$('sChoices').querySelectorAll('button').forEach(b => b.addEventListener('click', () => sphereAnswer(b)));
+  }
+  function sphereAnswer(b) {
+    if (sLocked) return;
+    const r = sphereRounds[sRound];
+    if (b.textContent !== r.good) {
+      b.classList.add('bad');
+      q$('sMsg').textContent = r.miss[Math.min(sMiss, r.miss.length - 1)];
+      if (++sMiss >= 2) [...q$('sChoices').children].find(x => x.textContent === r.good).classList.add('blink');
+      return;
+    }
+    sLocked = true;
+    b.classList.add('good'); b.classList.remove('blink');
+    q$('sMsg').textContent = r.win;
+    q$('sp' + sRound).classList.add('on');
+    // La sphère brille un peu plus à chaque bonne réponse
+    q$('sphOrb').style.filter = `brightness(${1 + (sRound + 1) * 0.06})`;
+    const box = b.getBoundingClientRect();
+    confetti(box.left + box.width / 2, box.top, 50);
+    if (sRound < sphereRounds.length - 1) q$('sNext').hidden = false;
+    else { q$('sStep').textContent = 'Sphère activée'; setTimeout(sphereOutro, 1800); }
+  }
+  function sphereOutro() {
+    q$('sphereQuiz').hidden = true;
+    document.querySelector('.sph-label').hidden = true;
+    q$('engrave').style.opacity = 0;
+    q$('sphOrb').classList.add('burst');
+    q$('sphereWin').hidden = false;
+    overlay.scrollTop = 0;
+    confetti(innerWidth / 2, innerHeight / 3, 160);
+    if (!testMode) try { localStorage.setItem('deniz33-sphere', '1'); } catch (_) {}
+    setTimeout(() => { show('sMission'); confetti(innerWidth / 2, innerHeight / 3, 120); }, 2800);
+  }
+
   // ---------- Prochain chapitre (en haut de la page) ----------
   function nextChapText() {
     if (souvenir) return '';
@@ -1291,7 +1424,8 @@
   // Liens de test : ?chapitre=1 / 2 / 3 / dimanche / 4  ·  ?skip = page directe
   const params = new URLSearchParams(location.search);
   // ?chapitre=souvenir = le mode souvenir · ?chapitre=verrou = le dimanche verrouillé avec le maillot
-  const testMap = { '1': 'mission', '2': 'gare', '3': 'lettre', 'dimanche': 'dimanche', 'retour': 'dimanche', '4': 'boss', 'souvenir': 'souvenir', 'verrou': 'verrou' };
+  // ?chapitre=weekend = tout le week-end débloqué, sans le sommaire (retour depuis la lettre en mode souvenir)
+  const testMap = { '1': 'mission', '2': 'gare', '3': 'lettre', 'dimanche': 'dimanche', 'retour': 'dimanche', '4': 'boss', 'souvenir': 'souvenir', 'weekend': 'souvenir', 'verrou': 'verrou' };
   const testMode = params.has('chapitre');
   const chapter = testMap[params.get('chapitre')] || currentChapter();
   const souvenir = chapter === 'souvenir';
@@ -1302,11 +1436,14 @@
   if (souvenir) {
     document.getElementById('heroBadge').textContent = 'SOUVENIRS · AMSTERDAM 2026';
     document.getElementById('heroSub').textContent = 'La quête est terminée… mais elle se revit à l\'infini.';
-    document.getElementById('souvenirs').hidden = false;
+    document.getElementById('souvenirs').hidden = params.get('chapitre') === 'weekend';
     document.getElementById('resaCard').hidden = false;
   }
   // Chapitre rejoué depuis les souvenirs : lien pour y revenir
-  if (params.has('souvenir')) document.getElementById('backSouvenir').hidden = false;
+  if (params.has('souvenir')) {
+    document.getElementById('backSouvenir').hidden = false;
+    document.getElementById('openLetterBtn').href = 'mot.html?souvenir';
+  }
 
   // L'onglet Dimanche reste verrouillé jusqu'au dimanche 4h00.
   const sundayOpen = chapter === 'dimanche' || chapter === 'boss' || souvenir;
@@ -1334,7 +1471,12 @@
   if (params.has('skip') || chapter === 'dimanche' || souvenir || chapter === 'verrou' || (chapter === 'gare' && alreadyFound && !testMode)) {
     overlay.style.display = 'none';
     document.body.classList.remove('locked');
-  } else if (chapter === 'mission') show('sMission');
+  } else if (chapter === 'mission') {
+    // La sphère ne se joue qu'une fois : s'il rouvre le site vendredi soir, il retombe sur l'ordre de mission.
+    let sphereDone = false;
+    try { sphereDone = !testMode && localStorage.getItem('deniz33-sphere') === '1'; } catch (_) {}
+    show(sphereDone ? 'sMission' : 'sSphere');
+  }
   else if (chapter === 'gare') show('sGuess');
   else if (chapter === 'lettre') show('sLetter');
   else if (chapter === 'boss') show('sBoss');

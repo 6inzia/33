@@ -102,10 +102,15 @@
   .back-link::before, .back-link::after { content: ""; width: 34px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 215, 106, .7)); }
   .back-link::after { transform: scaleX(-1); }
   .back-link.in { opacity: 1; }
+  .back-souvenir { position: fixed; top: 12px; left: 12px; z-index: 40; padding: 8px 12px; border-radius: 99px; text-decoration: none; font-family: Cinzel, serif; font-weight: 700;
+    letter-spacing: 2px; font-size: 12px; color: var(--gold); background: rgba(4, 11, 28, .75); border: 1px solid rgba(255, 215, 106, .6); }
+  .back-souvenir[hidden] { display: none; }
   .back-link:hover, .back-link:focus { color: #fff; text-shadow: 0 0 10px rgba(140, 210, 255, .9); }
 </style>
 </head>
 <body>
+<!-- Ouverte depuis les souvenirs : bouton pour revenir au sommaire -->
+<a class="back-souvenir" id="backSouvenir" href="index.html?chapitre=souvenir" hidden>◆ SOUVENIRS</a>
 
 <div id="envScreen">
   <div id="envelope" role="button" aria-label="Ouvrir la lettre">
@@ -201,6 +206,12 @@
       writeLetter();
     }, 1200);
   }, { once: true });
+
+  // Lettre ouverte depuis les souvenirs : bouton de retour en haut, et « revoir le week-end » garde ce bouton
+  if (new URLSearchParams(location.search).has('souvenir')) {
+    document.getElementById('backSouvenir').hidden = false;
+    document.querySelector('.back-link').href = 'index.html?chapitre=weekend&souvenir';
+  }
 
   // Pour l'aperçu : ?ouverte affiche directement la lettre entière
   if (location.search.includes('ouverte')) {
