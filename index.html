@@ -343,6 +343,8 @@
   @keyframes shake { 0%, 84%, 100% { transform: rotate(0); } 87% { transform: rotate(-10deg); } 91% { transform: rotate(10deg); } 95% { transform: rotate(-6deg); } }
   @keyframes ctaPulse { 50% { transform: scale(1.05); box-shadow: 0 0 34px rgba(255, 215, 106, .9); } }
   .lie { margin-top: 18px; text-align: center; }
+  #jLie.dissolve { animation: pyreDissolve 1.4s ease-in forwards; }
+  @keyframes pyreDissolve { to { opacity: 0; transform: translateY(-24px) scale(.96); filter: blur(7px); } }
   .lie b { font-family: Cinzel, serif; letter-spacing: 2px; color: var(--gold); display: block; margin-bottom: 6px; }
   .jersey { width: 210px; max-width: 65vw; cursor: pointer; filter: drop-shadow(0 0 24px rgba(140, 210, 255, .35)); }
   .jersey.turn { animation: turn .7s ease-in-out; }
@@ -710,13 +712,13 @@
           <div class="links"><a data-maps="Hortus Botanicus, Amsterdam">Hortus</a></div></div></li>
         <li><span class="time">11:45</span><div><h3>Chasse aux affiches pour VV, round 2</h3><p>La boutique du Rijksmuseum (Vermeer, Rembrandt, Museumstraat 1) et celle du Van Gogh Museum (Museumplein 6).</p>
           <div class="links"><a data-maps="Rijksmuseum Shop, Museumstraat 1, Amsterdam">Rijksmuseum Shop</a><a data-maps="Van Gogh Museum, Museumplein 6, Amsterdam">Van Gogh Shop</a></div></div></li>
-        <li><span class="time">12:30</span><div><h3>Spot photo · Lomanstraat</h3><p>La rue aux arbres qui forment une arche au-dessus des maisons : un décor parfait pour une photo.</p>
+        <li><span class="time">12:30</span><div><h3>12h30 - Lomanstraat</h3><p>La rue aux arbres qui forment une arche au-dessus des maisons.</p>
           <div class="links"><a class="photo" data-maps="Lomanstraat, Amsterdam, Netherlands">Spot photo · Lomanstraat</a></div></div></li>
         <li><span class="time">13:00</span><div><h3>Le Jordaan</h3><p>En tram puis à pied le long du Prinsengracht et de l'Egelantiersgracht : rues pavées, ponts fleuris et maisons penchées.</p>
           <div class="links"><a data-maps="Jordaan, Amsterdam">Jordaan</a><a data-maps="Westerkerk, Prinsengracht 279, Amsterdam">Prinsengracht</a><a data-maps="Egelantiersgracht, Amsterdam">Egelantiersgracht</a><a class="photo" data-maps="Brouwersgracht, Amsterdam">Spot photo · Brouwersgracht</a></div></div></li>
         <li><span class="time">15:30</span><div><h3>Déjeuner sur Haarlemmerdijk</h3><p>Au choix : la tarte aux pommes mythique de Winkel 43, les crêpes géantes de The Pancake Bakery ou les croques XXL de Monty's Toasties. Puis souvenirs et pauses gourmandes : stroopwafels fraîches, bulbes de tulipes d'hiver, mini gouda aromatisé.</p>
           <div class="links"><a href="https://share.google/sKeA6DOPfCT4gA048" target="_blank" rel="noopener">Winkel 43</a><a href="https://share.google/bhb15OJLjAji2JD0B" target="_blank" rel="noopener">Pancake Bakery</a><a href="https://share.google/CnqMBB7p8saJY0czU" target="_blank" rel="noopener">Monty's</a></div></div></li>
-        <li><span class="time">18:30</span><div><h3>Retour à la gare</h3><p>On récupère les sacs à l'Hotel, direction Amsterdam Centraal pour le train de 19h10.</p>
+        <li><span class="time">18:00</span><div><h3>Retour à la gare</h3><p>On récupère les sacs à l'Hotel, direction Amsterdam Centraal pour le train de 19h10.</p>
           <div class="links"><a data-maps="Kloveniersburgwal 137, Amsterdam">Hotel</a><a data-maps="Amsterdam Centraal">Amsterdam Centraal</a></div></div></li>
       </ul>
       <div class="side">
@@ -1194,7 +1196,7 @@
       q$('ronAwake').hidden = false;
       confetti(innerWidth / 2, innerHeight / 3, 160);
       if (!testMode) try { localStorage.setItem('deniz33-ronflex', '1'); } catch (_) {}
-      setTimeout(() => openSaturday(true), 12600);
+      setTimeout(() => openSaturday(true), 8400);
     }, 1400);
   }
   function openSaturday(party) {
@@ -1289,16 +1291,21 @@
         q$('qStep').textContent = 'Collection complète';
         // … et la petite blague : le verrou ne cède pas.
         setTimeout(() => {
-          // Le quiz et le maillot disparaissent : seul le message prend leur place.
+          // Le message remplace le maillot ET le quiz, dans le même emplacement.
           q$('jersey').hidden = true;
           q$('jLabel').hidden = true;
           q$('jerseyWrap').querySelector('.win.quiz').hidden = true;
           const lie = q$('jLie');
           lie.innerHTML = '<b>Verrou forcé… ?</b>Bravo, mais j\'ai menti : même un Gardien de Spira doit attendre l\'aube.<br>Dimanche reste verrouillé. Va dormir !';
           lie.hidden = false;
+          lie.classList.remove('dissolve');
           lie.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Après 30 secondes, le message s'efface : il ne reste que le cadenas.
-          setTimeout(() => { lie.hidden = true; }, 30000);
+          // Après 30 secondes, il se dissout en lucioles ; seul le cadenas reste.
+          setTimeout(() => {
+            pyreBurst();
+            lie.classList.add('dissolve');
+            setTimeout(() => { lie.hidden = true; }, 1450);
+          }, 30000);
         }, 1800);
       }
     } else {
@@ -1308,7 +1315,8 @@
       if (++fMiss >= 2) [...q$('qChoices').children].find(x => x.textContent === r.good).classList.add('blink');
     }
   }
-  // Le maillot n'est plus interactif : il disparaît à la fin du quiz.\n  showFootRound();
+  // Le maillot n'est plus interactif : il disparaît à la fin du quiz.
+  showFootRound();
 
   // ---------- Boutons Google Maps ----------
   document.querySelectorAll('a[data-maps]').forEach(a => {
