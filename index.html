@@ -301,6 +301,8 @@
 
   /* Maillot */
   .jersey-wrap { text-align: center; margin-top: 22px; }
+  #jerseyWrap[hidden] { display: none !important; }
+  #jerseyWrap:not([hidden]) { display: block !important; }
   /* Verrou : cadenas qui tremble au centre de 8 cristaux qui tournent */
   .lock-ring { position: relative; width: 190px; height: 190px; margin: 18px auto 0; }
   .lock-ring .orbit { position: absolute; inset: 0; animation: spin 24s linear infinite; }
@@ -1250,10 +1252,27 @@
   q$('slots').innerHTML = footRounds.map((_, i) => `<span id="s${i}" style="--i:${i}"></span>`).join('');
   // Le bouton « Forcer le verrou » lance les épreuves du maillot
   q$('forceBtn').addEventListener('click', () => {
-    q$('forceBtn').hidden = true;
-    q$('.force-title').hidden = true;
-    q$('jerseyWrap').hidden = false;
-    q$('jerseyWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const button = q$('forceBtn');
+    const title = q$('.force-title');
+    const wrap = q$('jerseyWrap');
+    const jersey = q$('jersey');
+    const label = q$('jLabel');
+    const quiz = wrap && wrap.querySelector('.win.quiz');
+    const lie = q$('jLie');
+
+    // Affiche explicitement toute la zone du défi avant de retirer l'invitation.
+    // Cela évite qu'un état hidden précédent laisse un cadre vide.
+    if (!wrap || !jersey || !label || !quiz) return;
+    wrap.hidden = false;
+    wrap.style.display = 'block';
+    jersey.hidden = false;
+    label.hidden = false;
+    quiz.hidden = false;
+    if (lie) { lie.hidden = true; lie.classList.remove('dissolve'); }
+    button.hidden = true;
+    if (title) title.hidden = true;
+    showFootRound();
+    requestAnimationFrame(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   });
   let fRound = 0, fMiss = 0, fLocked = false, wonKits = [], shownKit = 0;
   function wear(name, suffix = '') {
