@@ -282,6 +282,8 @@
   .tab[aria-selected="true"] { color: #fff; border-color: var(--edge); background: linear-gradient(180deg, var(--glass-top), var(--glass-bot)); box-shadow: 0 0 14px rgba(110, 175, 255, .3); }
   .tab.is-locked { opacity: .5; }
   .sun-locked { text-align: center; padding: 34px 12px; border: 1px dashed rgba(160, 210, 255, .35); border-radius: 10px; font-family: Cinzel, serif; letter-spacing: 2px; color: var(--muted); }
+  /* Après le clic, le bloc du cadenas se resserre sous le cadenas : aucun vide au-dessus du message final. */
+  .sun-locked.force-started { padding-bottom: 0; }
   .sun-locked p { margin: 0 0 8px; }
   .sun-locked b { display: block; color: var(--gold); font-size: 16px; }
   .day-sub { font-size: 14px; color: var(--muted); margin: 0 0 6px; text-align: center; }
@@ -1276,6 +1278,8 @@
     quiz.hidden = false;
     if (lie) { lie.hidden = true; lie.classList.remove('dissolve'); }
     button.hidden = true;
+    const lockPanel = document.querySelector('#sunLocked .sun-locked');
+    if (lockPanel) lockPanel.classList.add('force-started');
     if (title) {
       title.hidden = false;
       title.classList.remove('depart');
